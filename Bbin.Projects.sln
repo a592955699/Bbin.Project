@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbin.Bet", "Bbin.Bet\Bbin.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbin.BaiduAI", "Bbin.BaiduAI\Bbin.BaiduAI.csproj", "{97674D61-F859-42EF-A5B2-FA8BAD61BA21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbin.SinfferConsoleApp", "Bbin.Result.ConsoleApp\Bbin.SinfferConsoleApp.csproj", "{D46E59A9-B236-4A8D-B274-A9E42CA388A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbin.SinfferConsoleApp", "Bbin.Result.ConsoleApp\Bbin.SinfferConsoleApp.csproj", "{D46E59A9-B236-4A8D-B274-A9E42CA388A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbin.ResultConsoleApp", "Bbin.ResultConsoleApp\Bbin.ResultConsoleApp.csproj", "{5AAD9828-BF48-437A-8D27-AEFF37E4F49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{D46E59A9-B236-4A8D-B274-A9E42CA388A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D46E59A9-B236-4A8D-B274-A9E42CA388A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D46E59A9-B236-4A8D-B274-A9E42CA388A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AAD9828-BF48-437A-8D27-AEFF37E4F49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AAD9828-BF48-437A-8D27-AEFF37E4F49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AAD9828-BF48-437A-8D27-AEFF37E4F49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AAD9828-BF48-437A-8D27-AEFF37E4F49B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -86,26 +86,35 @@ namespace Bbin.Sniffer
         /// </summary>
         public virtual void LoadCookieContainer()
         {
-            if (File.Exists(cookieFileName))
+            try
             {
-                var uri = new Uri(siteConfig.Domain);
-                using (StreamReader sr = new StreamReader(cookieFileName, Encoding.UTF8))
+                if (File.Exists(cookieFileName))
                 {
-                    var json = sr.ReadToEnd();
-                    var cookies = JsonConvert.DeserializeObject<List<Cookie>>(json);
-                    if (cookies == null || cookies.Count <= 0) return;
-
-                    //加入到 CookieContainer
-                    foreach (Cookie item in cookies)
+                    var uri = new Uri(siteConfig.Domain);
+                    using (StreamReader sr = new StreamReader(cookieFileName, Encoding.UTF8))
                     {
-                        var newCookie = new Cookie(item.Name, item.Value, item.Path, item.Domain);
-                        if (item.Expires != DateTime.MinValue)
-                            newCookie.Expires = item.Expires;
-                        CookieContainer.Add(uri, newCookie);
-                        log.DebugFormat("【提示】从文件中加载 Cookie:{0}", JsonConvert.SerializeObject(newCookie));
+                        var json = sr.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(json))
+                            return;
+                        var cookies = JsonConvert.DeserializeObject<List<Cookie>>(json);
+                        if (cookies == null || cookies.Count <= 0) return;
+
+                        //加入到 CookieContainer
+                        foreach (Cookie item in cookies)
+                        {
+                            var newCookie = new Cookie(item.Name, item.Value, item.Path, item.Domain);
+                            if (item.Expires != DateTime.MinValue)
+                                newCookie.Expires = item.Expires;
+                            CookieContainer.Add(uri, newCookie);
+                            log.DebugFormat("【提示】从文件中加载 Cookie:{0}", JsonConvert.SerializeObject(newCookie));
+                        }
+
                     }
-                    
                 }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("【错误】从文件中加载 Cookie 异常，Path:{0}", cookieFileName, ex);
             }
         }
         /// <summary>

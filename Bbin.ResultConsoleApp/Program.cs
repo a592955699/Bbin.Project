@@ -1,12 +1,11 @@
-﻿using Bbin.Api.Baccarat.Configs;
-using Bbin.BaiduAI.Config;
-using Bbin.Core;
+﻿using Bbin.Core;
+using Bbin.Core.Cons;
 using Bbin.Core.RabbitMQ;
-using Bbin.Sniffer;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Text;
 
-namespace Bbin.SnifferConsoleApp
+namespace Bbin.ResultConsoleApp
 {
     class Program
     {
@@ -25,18 +24,12 @@ namespace Bbin.SnifferConsoleApp
             IConfiguration configuration = configurationBuilder.Build();
             ApplicationContext.Configure(configuration);
 
-            var baiduConfig = configuration.GetSection("baidu").Get<BaiduConfig>();
-            var bbinConfig = configuration.GetSection("bbin").Get<BbinConfig>();
-            var yongliConfig = configuration.GetSection("yongli").Get<SiteConfig>();
             var rabbitMQConfig = configuration.GetSection("rabbitMQ").Get<RabbitMQConfig>();
+            RabbitMQListener.QueueListener(rabbitMQConfig, RabbitMQCons.ResuleQueue, true, (message) =>
+            {
+                Console.WriteLine($"模拟消费消息:{message}");
+            });
 
-            ISocketService socketService = new SocketService(bbinConfig);
-            AbstractLoginService loginService = new YongLiLoginService(yongliConfig, baiduConfig);
-            RabbitMQClient rabbitMQClient = new RabbitMQClient(rabbitMQConfig);
-
-            SnifferService snifferService = new SnifferService(loginService, socketService, rabbitMQClient);
-
-            snifferService.DoExecute();
 
             Console.WriteLine("************ 输入 ‘e’ 退出程序");
             ConsoleKeyInfo key = Console.ReadKey();
@@ -44,8 +37,6 @@ namespace Bbin.SnifferConsoleApp
             {
                 key = Console.ReadKey();
             }
-            //退出时，自动关闭 WS 链接
-            socketService.WebSocket.Close();
         }
     }
 }

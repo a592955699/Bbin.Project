@@ -15,7 +15,7 @@ namespace Bbin.Sniffer
     /// <summary>
     /// 结果采集服务入口
     /// </summary>
-    public class SnifferService
+    public class SnifferService: ISnifferService
     {
         private readonly AbstractLoginService loginService;
         private readonly ISocketService socketService;
@@ -44,7 +44,7 @@ namespace Bbin.Sniffer
         /// <summary>
         /// 开始启动采集流程
         /// </summary>
-        public void DoExecute()
+        public void Start()
         {
             do
             {
@@ -60,6 +60,12 @@ namespace Bbin.Sniffer
                 break;
             }
             while (work);
+        }
+
+        public void Stop()
+        {
+            socketService.Close();
+            loginService.Logout();            
         }
 
         public bool IsLogin()
@@ -87,7 +93,7 @@ namespace Bbin.Sniffer
         {
             var eventArgs = (FullResultEventArgs)e;            
             log.Info($"【提示】采集全部结果 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
-            rabbitMQClient.SendQueue(JsonConvert.SerializeObject(eventArgs.Round), RabbitMQCons.ResuleQueue);
+            rabbitMQClient.SendQueue(eventArgs.Round, RabbitMQCons.SnifferRoundQueue);
         }
 
         private void WebSocketWrap_OnDealingResult(object sender, EventArgs e)
@@ -110,7 +116,7 @@ namespace Bbin.Sniffer
             if (eventArgs.Code == WebSocketColseCodes.API_EC_ACC_SID_INVALID)
             {
                 log.Warn($"【警告】账号 SessionId 过期,开始自动重连！");
-                DoExecute();
+                Start();
                 return;
             }
             //手动关闭

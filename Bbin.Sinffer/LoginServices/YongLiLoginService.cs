@@ -1,5 +1,5 @@
 ﻿using Baidu.Aip.Ocr;
-using Bbin.Api.Baccarat.Configs;
+using Bbin.Api.Baccarat.Entitys;
 using Bbin.BaiduAI.Config;
 using Bbin.Core.Utils;
 using System;
@@ -179,6 +179,11 @@ namespace Bbin.Sniffer
             log.InfoFormat("【提示】登录状态:{0}", login);
             return login;
             #endregion
+        }
+
+        public override void InternalLogout()
+        {
+            log.Info("模拟退出登录");
         }
 
         /// <summary>

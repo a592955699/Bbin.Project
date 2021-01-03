@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Baccarat.Configs;
+﻿using Bbin.Api.Baccarat.Entitys;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,10 +48,10 @@ namespace Bbin.Sniffer
         /// </summary>
         event EventHandler OnClosed;
         void InternalOnClosed(CloseEventArgs e);
-        void InternalOnCd(Round roomInfo);
-        void InternalOnFullResult(Round roomInfo);
-        void InternalOnDealingResult(Round roomInfo);
-        void InternalOnStateChange(Round roomInfo);
+        void InternalOnCd(RoundModel roomInfo);
+        void InternalOnFullResult(RoundModel roomInfo);
+        void InternalOnDealingResult(RoundModel roomInfo);
+        void InternalOnStateChange(RoundModel roomInfo);
         #endregion
 
         #region 方法

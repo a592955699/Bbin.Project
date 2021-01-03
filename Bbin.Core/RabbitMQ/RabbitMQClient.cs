@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,13 @@ namespace Bbin.Core.RabbitMQ
         public RabbitMQClient(RabbitMQConfig _rabbitMQConfig)
         {
             this.rabbitMQConfig = _rabbitMQConfig;
+        }
+
+        public void SendQueue<T>(T message, string queue, string exchange = "", string routingKey = "", bool durable = false, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null)
+            where T : new()
+        {
+            var messageString = JsonConvert.SerializeObject(message);
+            SendQueue(messageString, queue, exchange, routingKey, durable, exclusive, autoDelete, arguments);
         }
 
         public void SendQueue(string message, string queue, string exchange = "", string routingKey = "", bool durable = false, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null)

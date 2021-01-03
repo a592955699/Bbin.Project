@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Baccarat.Configs;
+﻿using Bbin.Api.Baccarat.Entitys;
 using Bbin.Core.Cons;
 using log4net;
 using Newtonsoft.Json;
@@ -79,6 +79,16 @@ namespace Bbin.Sniffer
                 log.Warn("【警告】内部登录失败");
             }
             return loginState;
+        }
+
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <returns></returns>
+        public void Logout()
+        {
+            log.Debug("【提示】准备退出登录");
+            InternalLogout();
         }
 
         /// <summary>
@@ -168,5 +178,10 @@ namespace Bbin.Sniffer
         /// 具体获取 SessionId 逻辑
         /// </summary>
         public abstract void InternalGetSessionId();
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <returns></returns>
+        public abstract void InternalLogout();
     }
 }

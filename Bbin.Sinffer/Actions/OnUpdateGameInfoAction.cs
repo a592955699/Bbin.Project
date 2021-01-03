@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using Bbin.Api.Baccarat.Configs;
+using Bbin.Api.Baccarat.Entitys;
 using Bbin.Sniffer.Cons;
 using Bbin.Core.Cons;
 using Bbin.Core;
@@ -19,7 +19,7 @@ namespace Bbin.Sniffer.Actions
         /// 过滤采集的牌桌
         /// </summary>
         public Dictionary<string, string> TableMap { get; private set; } = new Dictionary<string, string>();
-        Dictionary<string, Round> RnRsMap { get; set; } = new Dictionary<string, Round>();
+        Dictionary<string, RoundModel> RnRsMap { get; set; } = new Dictionary<string, RoundModel>();
 
         public OnUpdateGameInfoAction()
         {
@@ -29,7 +29,7 @@ namespace Bbin.Sniffer.Actions
             //TableMap.Add("3001-52", "主题百家乐TB1");
             //TableMap.Add("3001-37", "极速百家乐J");
             //TableMap.Add("3001-42", "竞咪M5");
-            var bbinConfig = ApplicationContext.Configuration.GetSection("bbin").Get<BbinConfig>();
+            var bbinConfig = ApplicationContext.Configuration.GetSection("BbinConfig").Get<BbinConfig>();
             if(bbinConfig != null && bbinConfig.Rooms!=null)
             {
                 TableMap = bbinConfig.Rooms;
@@ -40,14 +40,14 @@ namespace Bbin.Sniffer.Actions
             var sl = (JObject)data["sl"];
             var slDict = sl.ToObject<Dictionary<string, Dictionary<string, object>>>();
 
-            List<Round> rooms = new List<Round>();
+            List<RoundModel> rooms = new List<RoundModel>();
 
             foreach (KeyValuePair<string, Dictionary<string, object>> keyValue in slDict)
             {
                 if (TableMap.Count != 0 && !TableMap.ContainsKey(keyValue.Key))
                     continue;
 
-                Round round = new Round();
+                RoundModel round = new RoundModel();
 
                 round.RoomId = keyValue.Key;
                 object temp;
@@ -122,13 +122,13 @@ namespace Bbin.Sniffer.Actions
             }
         }
 
-        void SetRound(Round round)
+        void SetRound(RoundModel round)
         {
             RnRsMap[round.RoomId] = round;
         }
-        Round GetRound(string roundId)
+        RoundModel GetRound(string roundId)
         {
-            Round round;
+            RoundModel round;
             if (RnRsMap.TryGetValue(roundId, out round) && (DateTime.Now - round.Begin).TotalSeconds <= BbinCons.TowRoundInterval)
             {
                 return round;

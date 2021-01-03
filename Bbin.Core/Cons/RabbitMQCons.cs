@@ -6,6 +6,13 @@ namespace Bbin.Core.Cons
 {
     public class RabbitMQCons
     {
-        public static readonly string ResuleQueue = "BBIN.RESULT";
+        /// <summary>
+        /// sniffer 采集到 round
+        /// </summary>
+        public static readonly string SnifferRoundQueue = "BBIN.ROUND";
+        /// <summary>
+        /// 根据sniffer 采集的的 round 处理成 result 后
+        /// </summary>
+        public static readonly string SnifferResuleQueue = "BBIN.RESULT";
     }
 }

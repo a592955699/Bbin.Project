@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Baccarat.Configs;
+﻿using Bbin.Api.Baccarat.Entitys;
 using Bbin.Api.Baccarat.Eventargs;
 using Bbin.Core.Cons;
 using Bbin.Sniffer.Cons;
@@ -217,7 +217,7 @@ namespace Bbin.Sniffer
             }
             return string.Empty;
         }
-        public void InternalOnCd(Round roomInfo)
+        public void InternalOnCd(RoundModel roomInfo)
         {
             var args = new CdEventArgs()
             {
@@ -228,13 +228,13 @@ namespace Bbin.Sniffer
             };
             OnCdEvent?.Invoke(this, args);
         }
-        public void InternalOnFullResult(Round roomInfo)
+        public void InternalOnFullResult(RoundModel roomInfo)
         {
             try
             {
                 var args = new FullResultEventArgs()
                 {
-                    Round = new Round()
+                    Round = new RoundModel()
                     {
                         RoomId = roomInfo.RoomId,
                         Pk = roomInfo.Pk,
@@ -251,7 +251,7 @@ namespace Bbin.Sniffer
                 log.Error("【错误】InternalOnFullResult 异常", e);
             }
         }
-        public void InternalOnDealingResult(Round roomInfo)
+        public void InternalOnDealingResult(RoundModel roomInfo)
         {
             try
             {
@@ -269,7 +269,7 @@ namespace Bbin.Sniffer
                 log.Error("【错误】InternalOnDealingResult 异常", e);
             }
         }
-        public void InternalOnStateChange(Round roomInfo)
+        public void InternalOnStateChange(RoundModel roomInfo)
         {
             try
             {

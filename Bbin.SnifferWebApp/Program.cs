@@ -14,7 +14,7 @@ namespace Bbin.SnifferWebApp
         public static void Main(string[] args)
         {
             Console.WriteLine("欢迎使用 BBIN 百家乐数据采集测试工具!本程序只是做学习交流使用，请勿用于商业用途！");
-            ApplicationContext.ConfigureLog4Net(false);
+            ApplicationContext.ConfigureLog4Net(true);
             ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 

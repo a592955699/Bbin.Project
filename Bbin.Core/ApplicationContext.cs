@@ -1,7 +1,6 @@
 ﻿using Bbin.Core.Cons;
 using log4net;
 using log4net.Config;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
@@ -11,11 +10,12 @@ namespace Bbin.Core
 {
     public static class ApplicationContext
     {
+        ///// <summary>
+        ///// 当前上下文
+        ///// </summary>
+        //public static IApplicationBuilder ApplicationBuilder { get; private set; }
 
-        /// <summary>
-        /// 当前上下文
-        /// </summary>
-        public static IApplicationBuilder ApplicationBuilder { get; private set; }
+        public static IServiceProvider ServiceProvider { get; private set; }
         public static IConfiguration Configuration { get; private set; }
 
         /// <summary>
@@ -23,14 +23,17 @@ namespace Bbin.Core
         /// </summary>
         public static ILog Log { get; private set; }
 
-        public static void Configure(IApplicationBuilder app)
-        {
-            ApplicationBuilder = app;
-        }
-
+        //public static void Configure(IApplicationBuilder app)
+        //{
+        //    ApplicationBuilder = app;
+        //}
         public static void Configure(IConfiguration configuration)
         {
             Configuration = configuration;
+        }
+        public static void Configure(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
         }
 
         #region 方法

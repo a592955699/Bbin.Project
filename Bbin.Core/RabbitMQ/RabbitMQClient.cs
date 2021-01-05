@@ -28,8 +28,8 @@ namespace Bbin.Core.RabbitMQ
                 UserName = rabbitMQConfig.UserName,
                 Password = rabbitMQConfig.Password,
                 HostName = rabbitMQConfig.HostName,
-                //Port = rabbitMQConfig.Port,
-                //VirtualHost = rabbitMQConfig.VirtualHost
+                Port = rabbitMQConfig.Port,
+                VirtualHost = rabbitMQConfig.VirtualHost
             };
 
             //创建连接

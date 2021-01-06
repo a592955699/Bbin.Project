@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Bbin.Sniffer.Actions
 {
-    public class PingAction : IActionExecutor
+    public class PingAction : IInternalActionExecutor
     {
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {

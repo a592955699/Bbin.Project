@@ -1,42 +1,43 @@
-﻿using Bbin.Api.Baccarat.Entitys;
-using Bbin.Core.Cons;
-using Bbin.Core.RabbitMQ;
+﻿using Bbin.Api.Entitys;
+using Bbin.Api.Cons;
 using Bbin.Data;
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using Bbin.Api.Baccarat.Extensions;
+using Bbin.Api.Extensions;
 using log4net;
 using Newtonsoft.Json;
+using Bbin.Api.Model;
 
 namespace Bbin.Result
 {
     public class ResultService : IResultService
     {
-        private readonly RabbitMQConfig rabbitMQConfig;
+    
         private readonly IResultDbService resultDbService;
         private readonly IGameDbService gameDbService;
-        private readonly RabbitMQClient rabbitMQClient;
-
+        private readonly IMQService mqService;
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(ResultService));
 
-        public ResultService(RabbitMQConfig _rabbitMQConfig,
-            IResultDbService _resultDbService, 
+        public ResultService(
+            IResultDbService _resultDbService,
             IGameDbService _gameDbService,
-            RabbitMQClient _rabbitMQClient)
+            IMQService _mqService
+           )
         {
-            this.rabbitMQConfig = _rabbitMQConfig;
             this.resultDbService = _resultDbService;
             this.gameDbService = _gameDbService;
-            this.rabbitMQClient = _rabbitMQClient;
+            this.mqService = _mqService;
         }
         public void Listener()
         {
-            RabbitMQListener.QueueListener<RoundModel>(rabbitMQConfig, RabbitMQCons.SnifferRoundQueue, true, (round) =>
-            {
+            mqService.ListenerManager((queueModel)=> {
                 try
                 {
+                    if(queueModel==null || queueModel.Data == null)
+                    {
+                        log.WarnFormat("【警告】Round 转 Result 失败,数据不完整！");
+                        return;
+                    }
+                    var round = queueModel.Data;
                     if (string.IsNullOrWhiteSpace(round?.Rn))
                     {
                         log.WarnFormat("【警告】Round 转 Result 失败,数据不完整！ {0}", JsonConvert.SerializeObject(round));
@@ -58,19 +59,22 @@ namespace Bbin.Result
 
                     result.Game = game;
 
+                    //#TODO 事物处理
                     if (isNes)
                         gameDbService.Insert(game);
                     resultDbService.Insert(result);
+                    //log.DebugFormat("【提示】结果处理完毕！Json: {0}", JsonConvert.SerializeObject(round));
 
                     //处理完毕，推送通知
                     //注意：按照备份模式推送。 推送多个副本。
                     //1.处理好路
                     //2.处理下注
-                    rabbitMQClient.SendQueue(result.ResultId, RabbitMQCons.SnifferResuleQueue);
+                    mqService.PublishResult(result.ResultId);
+                    log.DebugFormat($"【提示】推送 Result 通知完毕 ResultId: {result.ResultId}");
                 }
                 catch (Exception ex)
                 {
-                    log.WarnFormat("【警告】处理结果异常！Json: {0}", JsonConvert.SerializeObject(round), ex);
+                    log.WarnFormat("【警告】侦听 round 处理结果异常！", ex);
                     return;
                 }
             });

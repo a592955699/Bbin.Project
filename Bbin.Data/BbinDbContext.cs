@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Baccarat.Entitys;
+﻿using Bbin.Api.Entitys;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

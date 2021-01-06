@@ -1,4 +1,4 @@
-﻿using Bbin.Core.Cons;
+﻿using Bbin.Api.Cons;
 using Bbin.Sniffer;
 using Bbin.Sniffer.Cons;
 using log4net;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Bbin.Sniffer.Actions
 {
-    public class getRoMapAction : IActionExecutor
+    public class getRoMapAction : IInternalActionExecutor
     {
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(getRoMapAction));
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)

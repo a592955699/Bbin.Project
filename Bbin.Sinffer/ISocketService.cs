@@ -1,4 +1,5 @@
-﻿using Bbin.Api.Baccarat.Entitys;
+﻿using Bbin.Api.Entitys;
+using Bbin.Api.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Bbin.Sniffer
         /// <summary>
         /// 处理 ws 响应的执行器
         /// </summary>
-        Dictionary<string, IActionExecutor> ActionExecutors { get; }
+        Dictionary<string, IInternalActionExecutor> ActionExecutors { get; }
         object SetParams<T>(string action, string name, T value);
         /// <summary>
         /// 重连次数

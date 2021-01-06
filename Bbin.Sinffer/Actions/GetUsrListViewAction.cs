@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bbin.Sniffer.Actions
 {
-    public class GetUsrListViewAction : IActionExecutor
+    public class GetUsrListViewAction : IInternalActionExecutor
     {
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {

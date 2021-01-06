@@ -1,14 +1,11 @@
-﻿using Bbin.Api.Baccarat.Eventargs;
-using Bbin.Core.Cons;
-using Bbin.Core.RabbitMQ;
+﻿using Bbin.Api.Eventargs;
+using Bbin.Api.Cons;
 using Bbin.Sniffer.Cons;
 using log4net;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using WebSocketSharp;
+using Newtonsoft.Json;
 
 namespace Bbin.Sniffer
 {
@@ -19,7 +16,7 @@ namespace Bbin.Sniffer
     {
         private readonly AbstractLoginService loginService;
         private readonly ISocketService socketService;
-        private readonly RabbitMQClient rabbitMQClient;
+        private readonly IMQService mqService;
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferService));
 
         /// <summary>
@@ -27,12 +24,11 @@ namespace Bbin.Sniffer
         /// </summary>
         public bool work = true;
 
-        public SnifferService(AbstractLoginService _loginService, ISocketService _socketService, RabbitMQClient _rabbitMQClient)
+        public SnifferService(AbstractLoginService _loginService, ISocketService _socketService, IMQService _mqService)
         {
             this.loginService = _loginService;
             this.socketService = _socketService;
-            this.rabbitMQClient = _rabbitMQClient;
-
+            this.mqService = _mqService;
 
             this.socketService.OnCd += WebSocketWrap_OnCd;
             this.socketService.OnDealingResult += WebSocketWrap_OnDealingResult;
@@ -93,7 +89,8 @@ namespace Bbin.Sniffer
         {
             var eventArgs = (FullResultEventArgs)e;            
             log.Info($"【提示】采集全部结果 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
-            rabbitMQClient.SendQueue(eventArgs.Round, RabbitMQCons.SnifferRoundQueue);
+            mqService.PublishRound(eventArgs.Round);
+            log.Info($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");
         }
 
         private void WebSocketWrap_OnDealingResult(object sender, EventArgs e)

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using Bbin.Core;
-using Bbin.Core.Cons;
-using Bbin.Core.RabbitMQ;
+using Bbin.Api.Cons;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Bbin.Sniffer;
 using Bbin.BaiduAI.Config;
-using Bbin.Api.Baccarat.Entitys;
+using Bbin.Api.Configs;
 
 namespace Bbin.SnifferConsoleApp
 {
@@ -18,15 +16,15 @@ namespace Bbin.SnifferConsoleApp
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("欢迎使用 BBIN 百家乐数据采集测试工具!本程序只是做学习交流使用，请勿用于商业用途！");
+            Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Sniffer 端)!本程序只是做学习交流使用，请勿用于商业用途！");
             ApplicationContext.ConfigureLog4Net(true);
             ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);
 
-            log.Info("************ 启动程序,本程序只是做学习交流使用，请勿用于商业用途 ************");
-            Console.WriteLine("************ 启动程序,本程序只是做学习交流使用，请勿用于商业用途 ************");
+            log.Info("************ 本程序只是做学习交流使用，请勿用于商业用途 ************");
+            Console.WriteLine("************ 本程序只是做学习交流使用，请勿用于商业用途 ************");
 
 
             var host = CreateHostBuilder(args).Build();
@@ -35,6 +33,9 @@ namespace Bbin.SnifferConsoleApp
                 var services = scope.ServiceProvider;
                 try
                 {
+                    var mqService = services.GetService<IMQService>();
+                    mqService.ListenerManager();
+
                     var snifferService = services.GetService<ISnifferService>();
                     snifferService.Start();
                 }
@@ -46,9 +47,8 @@ namespace Bbin.SnifferConsoleApp
             }
         }
 
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-       Host.CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
@@ -56,8 +56,8 @@ namespace Bbin.SnifferConsoleApp
                 services.AddSingleton(hostContext.Configuration.GetSection("BbinConfig").Get<BbinConfig>());
                 services.AddSingleton(hostContext.Configuration.GetSection("SiteConfig").Get<SiteConfig>());
 
-                services.AddSingleton<RabbitMQClient>();
                 services.AddSingleton<AbstractLoginService, YongLiLoginService>();
+                services.AddSingleton<IMQService, RabbitMQService>();
                 services.AddSingleton<ISocketService, SocketService>();
                 services.AddSingleton<ISnifferService, SnifferService>();
             });

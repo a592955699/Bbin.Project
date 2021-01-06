@@ -2,12 +2,12 @@
 using Bbin.Sniffer;
 using System;
 using System.Collections.Generic;
-using Bbin.Core.Cons;
+using Bbin.Api.Cons;
 using log4net;
 
 namespace Bbin.Sniffer.Actions
 {
-    public class OnLoginAction : IActionExecutor
+    public class OnLoginAction : IInternalActionExecutor
     {
         protected static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnLoginAction));
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)

@@ -4,15 +4,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using Bbin.Api.Baccarat.Entitys;
+using Bbin.Api.Entitys;
 using Bbin.Sniffer.Cons;
-using Bbin.Core.Cons;
+using Bbin.Api.Cons;
 using Bbin.Core;
 using Microsoft.Extensions.Configuration;
+using Bbin.Api.Model;
+using Bbin.Api.Configs;
 
 namespace Bbin.Sniffer.Actions
 {
-    public class OnUpdateGameInfoAction : IActionExecutor
+    public class OnUpdateGameInfoAction : IInternalActionExecutor
     {
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnUpdateGameInfoAction));
         /// <summary>

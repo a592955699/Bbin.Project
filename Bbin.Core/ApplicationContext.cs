@@ -1,4 +1,4 @@
-﻿using Bbin.Core.Cons;
+﻿using Bbin.Api.Cons;
 using log4net;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;

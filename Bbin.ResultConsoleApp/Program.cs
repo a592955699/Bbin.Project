@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using Bbin.Core;
-using Bbin.Core.Cons;
-using Bbin.Core.RabbitMQ;
+using Bbin.Api.Cons;
 using Bbin.Data;
 using Bbin.Result;
 using log4net;
@@ -11,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Bbin.Api.Configs;
 
 namespace Bbin.ResultConsoleApp
 {
@@ -18,16 +17,15 @@ namespace Bbin.ResultConsoleApp
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("欢迎使用 BBIN 百家乐数据采集测试工具!本程序只是做学习交流使用，请勿用于商业用途！");
+            Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Result 端)!本程序只是做学习交流使用，请勿用于商业用途！");
             ApplicationContext.ConfigureLog4Net(true);
             ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);
 
-            log.Info("************ 启动程序,本程序只是做学习交流使用，请勿用于商业用途 ************");
-            Console.WriteLine("************ 启动程序,本程序只是做学习交流使用，请勿用于商业用途 ************");
-
+            log.Info("************ 本程序只是做学习交流使用，请勿用于商业用途 ************");
+            Console.WriteLine("************ 本程序只是做学习交流使用，请勿用于商业用途 ************");
 
             var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
@@ -35,7 +33,6 @@ namespace Bbin.ResultConsoleApp
                 var services = scope.ServiceProvider;
                 try
                 {
-
                     IResultService resultService = services.GetService<IResultService>();
                     resultService.Listener();
                 }
@@ -56,9 +53,9 @@ namespace Bbin.ResultConsoleApp
                 ApplicationContext.Configure(services.BuildServiceProvider());
 
                 services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
-                services.AddSingleton<RabbitMQClient>();
                 services.AddScoped<IResultDbService, ResultDbService>();
                 services.AddScoped<IGameDbService, GameDbService>();
+                services.AddScoped<IMQService, RabbitMQService>();
                 services.AddScoped<IResultService, ResultService>();
 
                 services.AddDbContext<BbinDbContext>(options =>

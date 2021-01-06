@@ -1,6 +1,6 @@
 ﻿using System;
 using Bbin.Core;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Bbin.Sniffer;
 using Bbin.BaiduAI.Config;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
 
 namespace Bbin.SnifferConsoleApp
 {

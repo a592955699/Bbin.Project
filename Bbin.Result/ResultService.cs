@@ -1,11 +1,11 @@
-﻿using Bbin.Api.Entitys;
-using Bbin.Api.Cons;
+﻿using Bbin.Core.Entitys;
+using Bbin.Core.Cons;
 using Bbin.Data;
 using System;
-using Bbin.Api.Extensions;
+using Bbin.Core.Extensions;
 using log4net;
 using Newtonsoft.Json;
-using Bbin.Api.Model;
+using Bbin.Core.Model;
 
 namespace Bbin.Result
 {

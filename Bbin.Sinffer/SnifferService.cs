@@ -1,5 +1,5 @@
-﻿using Bbin.Api.Eventargs;
-using Bbin.Api.Cons;
+﻿using Bbin.Core.Eventargs;
+using Bbin.Core.Cons;
 using Bbin.Sniffer.Cons;
 using log4net;
 using System;

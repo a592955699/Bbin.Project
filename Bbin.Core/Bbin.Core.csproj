@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bbin.Api\Bbin.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="log4net.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

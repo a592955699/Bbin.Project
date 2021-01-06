@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Bbin.Api.Entitys;
+using Bbin.Core.Entitys;
 
 namespace Bbin.Data
 {

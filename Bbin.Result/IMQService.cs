@@ -1,5 +1,5 @@
-﻿using Bbin.Api.Model;
-using Bbin.Api.Models;
+﻿using Bbin.Core.Model;
+using Bbin.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

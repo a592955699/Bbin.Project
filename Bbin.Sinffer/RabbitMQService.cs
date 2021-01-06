@@ -1,8 +1,8 @@
-﻿using Bbin.Api;
-using Bbin.Api.Configs;
-using Bbin.Api.Cons;
-using Bbin.Api.Model;
-using Bbin.Api.Models;
+﻿using Bbin.Core;
+using Bbin.Core.Configs;
+using Bbin.Core.Cons;
+using Bbin.Core.Model;
+using Bbin.Core.Models;
 using Bbin.Sniffer.ActionExecutors;
 using log4net;
 using Newtonsoft.Json;

@@ -2,7 +2,7 @@
 using Bbin.Sniffer;
 using System;
 using System.Collections.Generic;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using log4net;
 
 namespace Bbin.Sniffer.Actions

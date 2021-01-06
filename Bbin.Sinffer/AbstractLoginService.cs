@@ -1,5 +1,5 @@
-﻿using Bbin.Api.Entitys;
-using Bbin.Api.Cons;
+﻿using Bbin.Core.Entitys;
+using Bbin.Core.Cons;
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
 
 namespace Bbin.Sniffer
 {

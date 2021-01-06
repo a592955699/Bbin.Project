@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Entitys;
+﻿using Bbin.Core.Entitys;
 using System;
 using System.Collections.Generic;
 using System.Text;

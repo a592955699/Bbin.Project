@@ -4,13 +4,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using Bbin.Api.Entitys;
+using Bbin.Core.Entitys;
 using Bbin.Sniffer.Cons;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using Bbin.Core;
 using Microsoft.Extensions.Configuration;
-using Bbin.Api.Model;
-using Bbin.Api.Configs;
+using Bbin.Core.Model;
+using Bbin.Core.Configs;
 
 namespace Bbin.Sniffer.Actions
 {

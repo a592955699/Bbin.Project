@@ -1,7 +1,7 @@
-﻿using Bbin.Api.Configs;
-using Bbin.Api.Cons;
-using Bbin.Api.Model;
-using Bbin.Api.Models;
+﻿using Bbin.Core.Configs;
+using Bbin.Core.Cons;
+using Bbin.Core.Model;
+using Bbin.Core.Models;
 using log4net;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

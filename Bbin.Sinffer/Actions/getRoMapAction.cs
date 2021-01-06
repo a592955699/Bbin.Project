@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Cons;
+﻿using Bbin.Core.Cons;
 using Bbin.Sniffer;
 using Bbin.Sniffer.Cons;
 using log4net;

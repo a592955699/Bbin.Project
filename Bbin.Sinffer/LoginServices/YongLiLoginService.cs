@@ -1,6 +1,6 @@
 ﻿using Baidu.Aip.Ocr;
-using Bbin.Api.Configs;
-using Bbin.Api.Entitys;
+using Bbin.Core.Configs;
+using Bbin.Core.Entitys;
 using Bbin.BaiduAI.Config;
 using Bbin.Core.Utils;
 using System;

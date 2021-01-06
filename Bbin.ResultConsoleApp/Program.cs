@@ -1,6 +1,6 @@
 ﻿using System;
 using Bbin.Core;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using Bbin.Data;
 using Bbin.Result;
 using log4net;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
 
 namespace Bbin.ResultConsoleApp
 {

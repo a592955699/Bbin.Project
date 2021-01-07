@@ -44,16 +44,24 @@ namespace Bbin.Sniffer
         {
             do
             {
-                bool loginState = loginService.CheckAndLogin();
-                if (!loginState)
+                try
                 {
-                    log.Warn("【警告】账号认证失败，无法链接ws.等待10S后重试");
+                    bool loginState = loginService.CheckAndLogin();
+                    if (!loginState)
+                    {
+                        log.Warn("【警告】账号认证失败，无法链接ws.等待10S后重试");
+                        Thread.Sleep(10000);
+                    }
+
+                    loginService.InternalGetSessionId();
+                    socketService.Connect(loginService.SessionId);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    log.Warn("【警告】账号认证异常,等待10S后重试", ex);
                     Thread.Sleep(10000);
                 }
-
-                loginService.InternalGetSessionId();
-                socketService.Connect(loginService.SessionId);
-                break;
             }
             while (work);
         }

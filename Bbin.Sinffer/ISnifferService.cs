@@ -6,6 +6,7 @@ namespace Bbin.Sniffer
 {
     public interface ISnifferService
     {
+        bool Work { get; }
         /// <summary>
         /// 开始采集
         /// 操作动作：

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Bbin.Core.Cons;
 using log4net;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
     public class OnLoginAction : IInternalActionExecutor
     {

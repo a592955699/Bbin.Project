@@ -1,7 +1,7 @@
 ﻿using Bbin.Sniffer;
 using System.Collections.Generic;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
     public class OnHallLoginAction : IInternalActionExecutor
     {

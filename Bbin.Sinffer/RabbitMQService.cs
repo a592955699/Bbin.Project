@@ -1,4 +1,5 @@
 ﻿using Bbin.Core;
+using Bbin.Core.Commandargs;
 using Bbin.Core.Configs;
 using Bbin.Core.Cons;
 using Bbin.Core.Model;
@@ -19,10 +20,12 @@ namespace Bbin.Sniffer
         private readonly RabbitMQConfig rabbitMQConfig;
         private readonly Dictionary<string, IActionExecutor> ActionExecutors;
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(RabbitMQService));
+        public string Id { get; private set; }
         public RabbitMQService(RabbitMQConfig _rabbitMQConfig)
         {
             rabbitMQConfig = _rabbitMQConfig;
             ActionExecutors = GetActionExecutors();
+            Id =  DateTime.Now.ToFileTime().ToString();
         }
 
         /// <summary>
@@ -39,8 +42,13 @@ namespace Bbin.Sniffer
             //同样要声明交换机的类型及名称，不然publish和consumer匹配不上
             channel.ExchangeDeclare(exchange: RabbitMQCons.ManagerExchange, type: "fanout");
 
+            var queueName = RabbitMQCons.SnifferQueuePrefix + Id;
+
             //声明一个队列，这个队列的名称随机
-            var queueName = channel.QueueDeclare().QueueName;
+            channel.QueueDeclare(queue: queueName);
+
+            ////声明一个队列，这个队列的名称随机
+            //var queueName = channel.QueueDeclare().QueueName;
 
             //将这个队列绑定（bind）到交换机上面
             channel.QueueBind(queue: queueName,
@@ -56,7 +64,6 @@ namespace Bbin.Sniffer
                 //处理收到的数据并打印
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(message);
 
                 var queueModel = JsonConvert.DeserializeObject<QueueModel<RoundModel>>(message);
                 if(queueModel == null)
@@ -68,6 +75,7 @@ namespace Bbin.Sniffer
                 IActionExecutor actionExecutor;
                 if(ActionExecutors.TryGetValue(queueModel.Key,out actionExecutor))
                 {
+                    log.Warn($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
                     actionExecutor.DoExcute(queueModel.Data);
                 }
                 else
@@ -81,6 +89,33 @@ namespace Bbin.Sniffer
                                  autoAck: true,
                                  consumer: consumer);
 
+        }
+
+        public void PublishUp(SnifferUpArgs snifferUpArgs)
+        {
+            ConnectionFactory factory = GetConnectionFactory(rabbitMQConfig);
+
+            //创建连接
+            using (var connection = factory.CreateConnection())
+            {
+                //创建通道
+                using (var channel = connection.CreateModel())
+                {
+                    //声明一个队列
+                    channel.QueueDeclare(RabbitMQCons.ManagerQueue, false, false, false, null);
+
+                    //封装消息实体
+                    var ququeModel = new QueueModel<SnifferUpArgs>(CommandKeys.PublishSnifferUp, snifferUpArgs);
+
+                    //将消息实体转成 json 后，处理成 byte[]
+                    var sendBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ququeModel));
+
+                    //发布消息
+                    channel.BasicPublish("", RabbitMQCons.ManagerQueue, null, sendBytes);
+                    channel.Close();
+                }
+                connection.Close();
+            }
         }
 
         /// <summary>
@@ -98,7 +133,7 @@ namespace Bbin.Sniffer
                 using (var channel = connection.CreateModel())
                 {
                     //声明一个队列
-                    //channel.QueueDeclare(RabbitMQCons.RoundQueue, false, false, false, null);
+                    channel.QueueDeclare(RabbitMQCons.RoundQueue, false, false, false, null);
 
                     //封装消息实体
                     var ququeModel = new QueueModel<RoundModel>(CommandKeys.PublishRound, roundModel);

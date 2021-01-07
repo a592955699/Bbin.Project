@@ -6,5 +6,9 @@ namespace Bbin.Manager
 {
     public interface IMQService
     {
+        /// <summary>
+        /// 侦听 ManagerQueue 
+        /// </summary>
+        void ListenerManager();
     }
 }

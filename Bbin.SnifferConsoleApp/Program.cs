@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Bbin.Sniffer;
 using Bbin.BaiduAI.Config;
 using Bbin.Core.Configs;
+using Bbin.Core.Commandargs;
+using Newtonsoft.Json;
 
 namespace Bbin.SnifferConsoleApp
 {
@@ -34,10 +36,22 @@ namespace Bbin.SnifferConsoleApp
                 try
                 {
                     var mqService = services.GetService<IMQService>();
+                    var siteConfig = services.GetService<SiteConfig>();
+                    SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
+                    snifferUpArgs.Id = mqService.Id;
+                    snifferUpArgs.UserName = siteConfig.UserName;
+                    snifferUpArgs.Password = siteConfig.PassWrod;
+
+                    //上线通知 ManagerQueue
+                    mqService.PublishUp(snifferUpArgs);
+                    log.Info($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
+
+                    //侦听 ManagerExchange 
                     mqService.ListenerManager();
 
-                    var snifferService = services.GetService<ISnifferService>();
-                    snifferService.Start();
+                    ////开始采集
+                    //var snifferService = services.GetService<ISnifferService>();
+                    //snifferService.Start();
                 }
                 catch (Exception ex)
                 {
@@ -60,6 +74,9 @@ namespace Bbin.SnifferConsoleApp
                 services.AddSingleton<IMQService, RabbitMQService>();
                 services.AddSingleton<ISocketService, SocketService>();
                 services.AddSingleton<ISnifferService, SnifferService>();
+
+                ApplicationContext.Configuration = hostContext.Configuration;
+                ApplicationContext.ServiceProvider = services.BuildServiceProvider();
             });
     }
 }

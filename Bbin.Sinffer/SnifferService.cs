@@ -17,12 +17,13 @@ namespace Bbin.Sniffer
         private readonly AbstractLoginService loginService;
         private readonly ISocketService socketService;
         private readonly IMQService mqService;
+        public bool Work { get; private set; }
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferService));
 
-        /// <summary>
-        /// 是否进入循环登录模式
-        /// </summary>
-        public bool work = true;
+        ///// <summary>
+        ///// 是否进入循环登录模式
+        ///// </summary>
+        //public bool work = true;
 
         public SnifferService(AbstractLoginService _loginService, ISocketService _socketService, IMQService _mqService)
         {
@@ -44,6 +45,7 @@ namespace Bbin.Sniffer
         {
             do
             {
+                Work = true;
                 try
                 {
                     bool loginState = loginService.CheckAndLogin();
@@ -63,11 +65,12 @@ namespace Bbin.Sniffer
                     Thread.Sleep(10000);
                 }
             }
-            while (work);
+            while (Work);
         }
 
         public void Stop()
         {
+            Work = false;
             socketService.Close();
             loginService.Logout();            
         }

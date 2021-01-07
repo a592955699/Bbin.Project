@@ -2,6 +2,8 @@
 using Bbin.Core;
 using Bbin.Core.Configs;
 using Bbin.Core.Cons;
+using Bbin.Manager;
+using Bbin.Manager.ActionExecutors;
 using log4net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +33,8 @@ namespace Bbin.ManagerConsoleApp
                 var services = scope.ServiceProvider;
                 try
                 {
-                   
+                    var mqService = services.GetService<IMQService>();
+                    mqService.ListenerManager();
                 }
                 catch (Exception ex)
                 {
@@ -46,6 +49,10 @@ namespace Bbin.ManagerConsoleApp
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
+                services.AddSingleton<IMQService, RabbitMQService>();
+
+                ApplicationContext.Configuration = hostContext.Configuration;
+                ApplicationContext.ServiceProvider = services.BuildServiceProvider();
             });
     }
 }

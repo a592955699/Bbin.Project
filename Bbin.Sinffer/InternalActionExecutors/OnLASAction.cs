@@ -1,9 +1,9 @@
 ﻿using Bbin.Sniffer;
 using System.Collections.Generic;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
-    public class NetStatusEventAction : IInternalActionExecutor
+    public class OnLASAction : IInternalActionExecutor
     {
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {

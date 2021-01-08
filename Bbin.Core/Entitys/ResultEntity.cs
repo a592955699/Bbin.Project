@@ -9,12 +9,12 @@ namespace Bbin.Core.Entitys
 {
     public class ResultEntity
     {
-        /// <summary>
-        /// 随机主键
-        /// </summary>
-        [Key] //主键 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long ResultId { get; set; }
+        ///// <summary>
+        ///// 随机主键
+        ///// </summary>
+        //[Key] //主键 
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public long ResultId { get; set; }
         public GameEntity Game { get; set; }
         /// <summary>
         /// 一靴中的第几局
@@ -30,6 +30,7 @@ namespace Bbin.Core.Entitys
         /// 冗余设计，主要为了查询使用
         /// 例：171858280
         /// </summary>
+        [Key]
         public string Rs { get; set; }
         public string Card1 { get; set; }
         public string Card2 { get; set; }

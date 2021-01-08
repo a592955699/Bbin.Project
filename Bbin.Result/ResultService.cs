@@ -11,7 +11,7 @@ namespace Bbin.Result
 {
     public class ResultService : IResultService
     {
-    
+
         private readonly IResultDbService resultDbService;
         private readonly IGameDbService gameDbService;
         private readonly IMQService mqService;
@@ -29,10 +29,10 @@ namespace Bbin.Result
         }
         public void Listener()
         {
-            mqService.ListenerManager((queueModel)=> {
+            mqService.ListenerManager((queueModel) => {
                 try
                 {
-                    if(queueModel==null || queueModel.Data == null)
+                    if (queueModel == null || queueModel.Data == null)
                     {
                         log.WarnFormat("【警告】Round 转 Result 失败,数据不完整！");
                         return;
@@ -61,16 +61,34 @@ namespace Bbin.Result
 
                     //#TODO 事物处理
                     if (isNes)
-                        gameDbService.Insert(game);
-                    resultDbService.Insert(result);
+                    {
+                        if(gameDbService.findByDateAndIndex(game.Date,game.Index)==null)
+                        {
+                            gameDbService.Insert(game);
+                            log.DebugFormat("【提示】靴不存在！新增靴!");
+                        }
+                        else
+                        {
+                            log.DebugFormat("【提示】靴已存在！不新增靴!");
+                        }
+                    }
+                    if (resultDbService.findByRs(result.Rs) != null)
+                    {
+                        log.DebugFormat("【提示】结果已存在！跳过后续操作!");
+                        return;
+                    }
+                    else
+                    {
+                        resultDbService.Insert(result);
+                    }
                     //log.DebugFormat("【提示】结果处理完毕！Json: {0}", JsonConvert.SerializeObject(round));
 
                     //处理完毕，推送通知
                     //注意：按照备份模式推送。 推送多个副本。
                     //1.处理好路
                     //2.处理下注
-                    mqService.PublishResult(result.ResultId);
-                    log.DebugFormat($"【提示】推送 Result 通知完毕 ResultId: {result.ResultId}");
+                    mqService.PublishResult(result.Rs);
+                    log.DebugFormat($"【提示】推送 Result 通知完毕 ResultId: {result.Rs}");
                 }
                 catch (Exception ex)
                 {

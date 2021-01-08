@@ -13,9 +13,9 @@ namespace Bbin.Data
         {
             this.dbContext = _bbinDbContext;
         }
-        public ResultEntity findById(long resultId)
+        public ResultEntity findByRs(string rs)
         {
-            return dbContext.Results.FirstOrDefault(x => x.ResultId == resultId);
+            return dbContext.Results.FirstOrDefault(x => x.Rs == rs);
         }
 
         public List<ResultEntity> findList(long gameId)

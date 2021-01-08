@@ -38,7 +38,7 @@ namespace Bbin.SnifferConsoleApp
                     var mqService = services.GetService<IMQService>();
                     var siteConfig = services.GetService<SiteConfig>();
                     SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
-                    snifferUpArgs.Id = mqService.Id;
+                    snifferUpArgs.QueueName = mqService.QueueName;
                     snifferUpArgs.UserName = siteConfig.UserName;
                     snifferUpArgs.Password = siteConfig.PassWrod;
 

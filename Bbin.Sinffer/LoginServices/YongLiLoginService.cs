@@ -155,7 +155,7 @@ namespace Bbin.Sniffer
             html = HttpUtil.DoPostAsycn(httpWebRequest, data, Encoding.UTF8).Result;
             log.DebugFormat("【提示】请求 login_do ,响应Html:\r\n{0} ", html);
 
-            if (html != "1" && html != "10")
+            if (html != "1" && html != "10" && html != "5")
             {
                 log.WarnFormat("【警告】请求 login_do, 破解失败,正常值:1,现状值:{0}", html);
                 return false;

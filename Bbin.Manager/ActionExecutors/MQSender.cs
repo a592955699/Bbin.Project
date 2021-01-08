@@ -12,14 +12,10 @@ namespace Bbin.Manager.ActionExecutors
 {
     public abstract class MQSender 
     {
-        private readonly RabbitMQConfig rabbitMQConfig;
-        public MQSender(RabbitMQConfig _rabbitMQConfig)
-        {
-            rabbitMQConfig = _rabbitMQConfig;
-        }
-
         public void SendMessage<T>(string queueName, QueueModel<T> queue)
         {
+            var rabbitMQConfig = (RabbitMQConfig)ApplicationContext.ServiceProvider.GetService(typeof(RabbitMQConfig));
+
             ConnectionFactory factory = GetConnectionFactory(rabbitMQConfig);
 
             //创建连接

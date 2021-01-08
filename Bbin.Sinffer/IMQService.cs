@@ -8,7 +8,7 @@ namespace Bbin.Sniffer
 {
     public interface IMQService
     {
-        string Id { get; }
+        string QueueName { get; }
         /// <summary>
         /// 向 manager 服务发送上线通知
         /// </summary>

@@ -20,12 +20,12 @@ namespace Bbin.Sniffer
         private readonly RabbitMQConfig rabbitMQConfig;
         private readonly Dictionary<string, IActionExecutor> ActionExecutors;
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(RabbitMQService));
-        public string Id { get; private set; }
+        public string QueueName { get; private set; }
         public RabbitMQService(RabbitMQConfig _rabbitMQConfig)
         {
             rabbitMQConfig = _rabbitMQConfig;
             ActionExecutors = GetActionExecutors();
-            Id =  DateTime.Now.ToFileTime().ToString();
+            QueueName = RabbitMQCons.SnifferQueuePrefix + DateTime.Now.ToFileTime().ToString();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Bbin.Sniffer
             //同样要声明交换机的类型及名称，不然publish和consumer匹配不上
             channel.ExchangeDeclare(exchange: RabbitMQCons.ManagerExchange, type: "fanout");
 
-            var queueName = RabbitMQCons.SnifferQueuePrefix + Id;
+            var queueName = QueueName;
 
             //声明一个队列，这个队列的名称随机
             channel.QueueDeclare(queue: queueName);

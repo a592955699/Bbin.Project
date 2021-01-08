@@ -87,7 +87,7 @@ namespace Bbin.Manager
         private Dictionary<string, IActionExecutor> GetActionExecutors()
         {
             Dictionary<string, IActionExecutor> keyValues = new Dictionary<string, IActionExecutor>();
-            keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor(rabbitMQConfig));
+            keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
             return keyValues;
         }
     }

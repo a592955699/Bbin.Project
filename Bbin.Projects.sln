@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbin.ManagerConsoleApp", "B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bbin.BetService", "Bbin.BetService", "{C94FC491-52EE-45BA-851F-3C9F36E31AF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbin.ManagerWebApp", "Bbin.ManagerWebApp\Bbin.ManagerWebApp.csproj", "{D2CE0023-E79B-45A4-91E1-5720E5CBE86E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{F1B9AFEB-4348-4A48-A433-0A2C71B94D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1B9AFEB-4348-4A48-A433-0A2C71B94D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1B9AFEB-4348-4A48-A433-0A2C71B94D37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CE0023-E79B-45A4-91E1-5720E5CBE86E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CE0023-E79B-45A4-91E1-5720E5CBE86E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CE0023-E79B-45A4-91E1-5720E5CBE86E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CE0023-E79B-45A4-91E1-5720E5CBE86E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{9635D818-5257-4CD3-AC57-6139ACA65FD5} = {53E3685A-9F85-4014-8E44-11CDA8A26BFB}
 		{0508194F-5489-4B2B-B5C9-A283E45CF515} = {E57AAEA1-3F2C-4D69-918A-EE15988C9CC8}
 		{F1B9AFEB-4348-4A48-A433-0A2C71B94D37} = {E57AAEA1-3F2C-4D69-918A-EE15988C9CC8}
+		{D2CE0023-E79B-45A4-91E1-5720E5CBE86E} = {E57AAEA1-3F2C-4D69-918A-EE15988C9CC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB560BCD-8031-488E-BB8C-3DF0D6CBDE41}

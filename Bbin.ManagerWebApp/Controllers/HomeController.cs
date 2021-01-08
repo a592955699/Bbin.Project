@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bbin.ManagerWebApp.Models;
+using Bbin.Manager;
+using Bbin.Core.Models;
+using Bbin.Core.Cons;
+using Bbin.Core.Commandargs;
+using Bbin.Manager.ActionExecutors;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
@@ -13,14 +18,53 @@ namespace Bbin.ManagerWebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private ManagerApplicationContext _managerApplicationContext;
+
+
+        public HomeController(ILogger<HomeController> logger, ManagerApplicationContext managerApplicationContext)
         {
             _logger = logger;
+            _managerApplicationContext = managerApplicationContext;
         }
 
+        /// <summary>
+        /// 采集账号列表
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
-            return View();
+            return View(_managerApplicationContext.Sniffers);
+        }
+        /// <summary>
+        /// 启动 snffer 采集
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        public IActionResult SnifferStart(string queueName)
+        {
+            var sniffer = _managerApplicationContext.GetSniffer(queueName);
+
+            //发动采集申请
+            var newQueueModel = new QueueModel<SnifferUpArgs>(CommandKeys.PublishSnifferStart, sniffer);
+            RabbitMQUtils.SendMessage(sniffer.QueueName, newQueueModel);
+
+            return Content("已发送 SnifferStart 命令");
+        }
+
+        /// <summary>
+        /// 停止 sniffer 采集
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        public IActionResult SnifferStop(string queueName)
+        {
+            var sniffer = _managerApplicationContext.GetSniffer(queueName);
+
+            //发动采集申请
+            var newQueueModel = new QueueModel<SnifferStopArgs>(CommandKeys.PublishSnifferStop, null);
+            RabbitMQUtils.SendMessage(sniffer.QueueName, newQueueModel);
+
+            return Content("已发送 SnifferStop 命令");
         }
 
         public IActionResult Privacy()

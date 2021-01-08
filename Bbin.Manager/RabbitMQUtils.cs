@@ -10,9 +10,24 @@ using System.Text;
 
 namespace Bbin.Manager.ActionExecutors
 {
-    public abstract class MQSender 
+    public abstract class RabbitMQUtils 
     {
-        public void SendMessage<T>(string queueName, QueueModel<T> queue)
+        /// <summary>
+        /// 广播
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queue"></param>
+        public static void SendMessage<T>(QueueModel<T> queue)
+        {
+
+        }
+        /// <summary>
+        /// p2p
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queueName"></param>
+        /// <param name="queue"></param>
+        public static void SendMessage<T>(string queueName, QueueModel<T> queue)
         {
             var rabbitMQConfig = (RabbitMQConfig)ApplicationContext.ServiceProvider.GetService(typeof(RabbitMQConfig));
 
@@ -38,7 +53,7 @@ namespace Bbin.Manager.ActionExecutors
             }
         }
  
-        private ConnectionFactory GetConnectionFactory(RabbitMQConfig rabbitMQConfig)
+        private static ConnectionFactory GetConnectionFactory(RabbitMQConfig rabbitMQConfig)
         {
             return new ConnectionFactory
             {

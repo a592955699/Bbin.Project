@@ -2,12 +2,37 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bbin.Manager
 {
+    /// <summary>
+    /// manager 上下文
+    /// #TODO 需要做成单利模式
+    /// </summary>
     public class ManagerApplicationContext
     {
+        public ManagerApplicationContext()
+        {
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    lock (this)
+                    {
+                        var list = Sniffers.Where(x => (DateTime.Now - x.LastDateTime).TotalSeconds > 20).ToList();
+                        foreach (var item in list)
+                        {
+                            Sniffers.Remove(item);
+                        }
+                    }
+                    await Task.Delay(1000);
+                }
+            });
+            
+        }
+
         public List<SnifferUpArgs> Sniffers = new List<SnifferUpArgs>();
 
         /// <summary>
@@ -16,8 +41,11 @@ namespace Bbin.Manager
         /// <param name="snifferUpArgs"></param>
         public void AddSniffers(SnifferUpArgs snifferUpArgs)
         {
-            RemoveSniffers(snifferUpArgs);
-            Sniffers.Add(snifferUpArgs);
+            lock(this)
+            {
+                RemoveSniffers(snifferUpArgs);
+                Sniffers.Add(snifferUpArgs);
+            }
         }
 
         /// <summary>
@@ -29,8 +57,16 @@ namespace Bbin.Manager
             var sniffer = Sniffers.FirstOrDefault(x => x.QueueName == snifferUpArgs.QueueName);
             if (sniffer != null)
             {
-                Sniffers.Remove(sniffer);
+                lock (this)
+                {
+                    Sniffers.Remove(sniffer);
+                }
             }
+        }
+
+        public SnifferUpArgs GetSniffer(string queueName)
+        {
+            return Sniffers.FirstOrDefault(x => x.QueueName == queueName);
         }
     }
 }

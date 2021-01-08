@@ -65,6 +65,8 @@ namespace Bbin.Sniffer
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
+                log.Warn($"【警告】侦听 exchange {RabbitMQCons.ManagerExchange}  Queue:{queueName}  收到消息 Body:{message}");
+
                 var queueModel = JsonConvert.DeserializeObject<QueueModel<RoundModel>>(message);
                 if(queueModel == null)
                 {
@@ -164,8 +166,8 @@ namespace Bbin.Sniffer
         private Dictionary<string, IActionExecutor> GetActionExecutors()
         {
             Dictionary<string, IActionExecutor> keyValues = new Dictionary<string, IActionExecutor>();
-            keyValues.Add(CommandKeys.PublishSnifferStart, new StartSnifferActionExecutor());
-            keyValues.Add(CommandKeys.PublishSnifferStop, new StopSnifferActionExecutor());
+            keyValues.Add(CommandKeys.PublishSnifferStart, new SnifferStartActionExecutor());
+            keyValues.Add(CommandKeys.PublishSnifferStop, new SnifferStopActionExecutor());
             return keyValues;
         }
     }

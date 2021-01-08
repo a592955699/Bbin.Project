@@ -89,7 +89,12 @@ namespace Bbin.Sniffer
         public void Logout()
         {
             log.Debug("【提示】准备退出登录");
-            InternalLogout();
+            CookieContainer cookieContainer = new CookieContainer();
+            InternalLogout();            
+            if (File.Exists(cookieFileName))
+            {
+                File.Delete(cookieFileName);
+            }
         }
 
         /// <summary>

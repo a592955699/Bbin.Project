@@ -19,6 +19,14 @@ namespace Bbin.Core.Commandargs
         /// </summary>
         public string Password { get; set; }
         /// <summary>
+        /// 是否启动采集任务
+        /// </summary>
+        public bool Work { get; set; }
+        /// <summary>
+        /// 是否连接到 bbin WebSocket
+        /// </summary>
+        public bool Connected { get; set; }
+        /// <summary>
         /// 最后活动时间
         /// </summary>
         public DateTime LastDateTime { get; set; } = DateTime.Now;

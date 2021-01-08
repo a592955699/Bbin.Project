@@ -1,8 +1,67 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model IEnumerable<Bbin.Core.Commandargs.SnifferUpArgs>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QueueName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Work)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Connected)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastDateTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QueueName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Work)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Connected)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastDateTime)
+                </td>
+                <td>
+                    @if (item.Work)
+                    {
+                        @Html.ActionLink("Stop", "SnifferStop", new { queueName = item.QueueName }, new { target = "_blank" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Start", "SnifferStart", new { queueName = item.QueueName }, new { target = "_blank" })
+}
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

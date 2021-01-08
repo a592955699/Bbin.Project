@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Bbin.Sniffer.ActionExecutors
 {
-    public class StopSnifferActionExecutor : IActionExecutor
+    public class SnifferStopActionExecutor : IActionExecutor
     {
-        private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(StartSnifferActionExecutor));
+        private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferStartActionExecutor));
         public object DoExcute(object args)
         {
             var snifferService = (ISnifferService)ApplicationContext.ServiceProvider.GetService(typeof(ISnifferService));

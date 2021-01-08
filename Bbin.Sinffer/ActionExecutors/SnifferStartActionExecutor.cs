@@ -4,9 +4,9 @@ using log4net;
 
 namespace Bbin.Sniffer.ActionExecutors
 {
-    public class StartSnifferActionExecutor : IActionExecutor
+    public class SnifferStartActionExecutor : IActionExecutor
     {
-        private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(StartSnifferActionExecutor));
+        private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferStartActionExecutor));
         public object DoExcute(object args)
         {
             var snifferService = (ISnifferService)ApplicationContext.ServiceProvider.GetService(typeof(ISnifferService));

@@ -1,14 +1,14 @@
-﻿using Bbin.Core.Cons;
+﻿
+using Bbin.Core.Cons;
 using Bbin.Sniffer;
-using Bbin.Sniffer.Cons;
 using log4net;
 using System.Collections.Generic;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
-    public class getRoMapAction : IInternalActionExecutor
+    public class OnActivityAction : IInternalActionExecutor
     {
-        ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(getRoMapAction));
+        ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnActivityAction));
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {
             object runError = string.Empty;
@@ -16,7 +16,12 @@ namespace Bbin.Sniffer.Actions
             {
                 if (runError.ToString() == "IDLE_10M")
                 {
-                    log.Info("【提示】"+WebSocketColseCodes.ActivityIDLE_10M);
+                    log.Warn(runError.ToString());
+                    //webSocketWrap.Close(WebSocketColseCodes.ActivityIDLE_10M);
+                }
+                else
+                {
+                    log.Warn("【警告】OnActivityAction runEor:" + runError);
                 }
             }
         }

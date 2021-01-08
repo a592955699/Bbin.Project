@@ -1,9 +1,9 @@
 ﻿using Bbin.Sniffer;
 using System.Collections.Generic;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
-    public class PreferencesAction : IInternalActionExecutor
+    public class OnPoolInfoAction : IInternalActionExecutor
     {
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {

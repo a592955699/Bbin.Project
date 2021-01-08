@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Bbin.Core.Model;
 using Bbin.Core.Configs;
 
-namespace Bbin.Sniffer.Actions
+namespace Bbin.SnifferInternalActionExecutors
 {
     public class OnUpdateGameInfoAction : IInternalActionExecutor
     {

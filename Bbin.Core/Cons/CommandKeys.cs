@@ -10,7 +10,10 @@ namespace Bbin.Core.Cons
         /// sniffer 服务向 result服务发送 round 结果命令
         /// </summary>
         public static string PublishRound = "PublishRound";
-
+        /// <summary>
+        /// sniffer 服务向 manager 服务发送上线通知
+        /// </summary>
+        public static string PublishSnifferUp = "PublishSnifferUp";
         /// <summary>
         /// result 服务向 manager 服务发送 result 结果命令
         /// </summary>

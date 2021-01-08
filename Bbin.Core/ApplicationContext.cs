@@ -10,31 +10,13 @@ namespace Bbin.Core
 {
     public static class ApplicationContext
     {
-        ///// <summary>
-        ///// 当前上下文
-        ///// </summary>
-        //public static IApplicationBuilder ApplicationBuilder { get; private set; }
-
-        public static IServiceProvider ServiceProvider { get; private set; }
-        public static IConfiguration Configuration { get; private set; }
+        public static IServiceProvider ServiceProvider { get; set; }
+        public static IConfiguration Configuration { get; set; }
 
         /// <summary>
         /// Log4net 日志记录
         /// </summary>
         public static ILog Log { get; private set; }
-
-        //public static void Configure(IApplicationBuilder app)
-        //{
-        //    ApplicationBuilder = app;
-        //}
-        public static void Configure(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        public static void Configure(IServiceProvider serviceProvider)
-        {
-            ServiceProvider = serviceProvider;
-        }
 
         #region 方法
         /// <summary>

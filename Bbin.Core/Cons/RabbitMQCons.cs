@@ -17,10 +17,14 @@ namespace Bbin.Core.Cons
         /// <summary>
         /// manager 接收消息的队列 key
         /// </summary>
-        public static readonly string ManagerQueue = "BBIN.QUQUE.RESULT";
+        public static readonly string ManagerQueue = "BBIN.MANAGER.QUQUE";
         /// <summary>
         /// manager 服务广播交换机 key
         /// </summary>
-        public static readonly string ManagerExchange = "BBIN.EXCHANGE.MANAGER";
+        public static readonly string ManagerExchange = "BBIN.MANAGER.EXCHANGE";
+        /// <summary>
+        /// sniffer 加入到 Manager Exchange 时,注册 Queue 的前缀
+        /// </summary>
+        public static readonly string SnifferQueuePrefix = "BBIN.SNIFFER.QUEUE";
     }
 }

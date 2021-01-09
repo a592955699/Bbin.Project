@@ -35,6 +35,21 @@ namespace Bbin.ManagerWebApp.Controllers
         {
             return View(_managerApplicationContext.Sniffers);
         }
+        [HttpGet]
+        public IActionResult Start(string queueName)
+        {
+            var sniffer = _managerApplicationContext.GetSniffer(queueName);
+            return View(sniffer);
+        }
+        [HttpPost]
+        public IActionResult Start(SnifferUpArgs sniffer)
+        {
+            //发动采集申请
+            var newQueueModel = new QueueModel<SnifferUpArgs>(CommandKeys.PublishSnifferStart, sniffer);
+            RabbitMQUtils.SendMessage(sniffer.QueueName, newQueueModel);
+            ViewBag.Message = "已发送 SnifferStart 命令，等待10秒后将更新状态";
+            return View(sniffer);
+        }
         /// <summary>
         /// 启动 snffer 采集
         /// </summary>

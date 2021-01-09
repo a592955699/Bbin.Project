@@ -15,7 +15,7 @@
                 @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
+                @Html.DisplayNameFor(model => model.PassWord)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Work)
@@ -40,7 +40,7 @@
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Password)
+                    @Html.DisplayFor(modelItem => item.PassWord)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Work)
@@ -58,7 +58,7 @@
                     }
                     else
                     {
-                        @Html.ActionLink("Start", "SnifferStart", new { queueName = item.QueueName }, new { target = "_blank" })
+                        @Html.ActionLink("Start", "Start", new { queueName = item.QueueName }, new { target = "_blank" })
 }
                 </td>
             </tr>

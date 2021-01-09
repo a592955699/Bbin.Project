@@ -31,7 +31,7 @@
 //                        SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
 //                        snifferUpArgs.QueueName = mqService.QueueName;
 //                        snifferUpArgs.UserName = siteConfig.UserName;
-//                        snifferUpArgs.Password = siteConfig.PassWrod;
+//                        snifferUpArgs.Password = siteConfig.PassWord;
 //                        snifferUpArgs.Connected = socketService.IsConnect;
 
 //                        //上线通知 ManagerQueue

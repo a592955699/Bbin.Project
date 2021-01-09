@@ -17,7 +17,7 @@ namespace Bbin.Core.Commandargs
         /// <summary>
         /// 密码
         /// </summary>
-        public string Password { get; set; }
+        public string PassWord { get; set; }
         /// <summary>
         /// 是否启动采集任务
         /// </summary>

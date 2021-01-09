@@ -67,7 +67,7 @@ namespace Bbin.Sniffer
 
                 log.Warn($"【警告】侦听 exchange {RabbitMQCons.ManagerExchange}  Queue:{queueName}  收到消息 Body:{message}");
 
-                var queueModel = JsonConvert.DeserializeObject<QueueModel<RoundModel>>(message);
+                var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
                 if(queueModel == null)
                 {
                     log.Warn($"【警告】侦听 exchange {RabbitMQCons.ManagerExchange}  Queue:{queueName}  Body:{message} 接收数据序列化为 null");

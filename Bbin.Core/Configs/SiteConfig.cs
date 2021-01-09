@@ -11,7 +11,7 @@ namespace Bbin.Core.Configs
         /// </summary>
         public string Domain = "https://www.8876835.com/";
         public string UserName { get; set; } = "hujunmin";
-        public string PassWrod { get; set; } = "a123456";
+        public string PassWord { get; set; } = "a123456";
         /// <summary>
         /// 验证码重试次数
         /// </summary>

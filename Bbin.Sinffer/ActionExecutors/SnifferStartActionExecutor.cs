@@ -1,6 +1,10 @@
 ﻿using Bbin.Core;
+using Bbin.Core.Commandargs;
+using Bbin.Core.Configs;
 using Bbin.Core.Cons;
 using log4net;
+using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bbin.Sniffer.ActionExecutors
 {
@@ -9,7 +13,13 @@ namespace Bbin.Sniffer.ActionExecutors
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferStartActionExecutor));
         public object DoExcute(object args)
         {
+            var snifferUpArgs = ((JObject)args).ToObject<SnifferUpArgs>();            
+            var siteConfig = ApplicationContext.ServiceProvider.GetService<SiteConfig>();
+            siteConfig.UserName = snifferUpArgs.UserName;
+            siteConfig.PassWord = snifferUpArgs.PassWord;
+
             var snifferService = (ISnifferService)ApplicationContext.ServiceProvider.GetService(typeof(ISnifferService));
+            snifferService.SetSiteConfig(siteConfig);
 
             //修改了配置，需要重启
             if (args != null && snifferService.Work)

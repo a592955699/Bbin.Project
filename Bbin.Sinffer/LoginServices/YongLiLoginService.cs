@@ -21,6 +21,7 @@ namespace Bbin.Sniffer
             baiduConfig = _baiduConfig;
         }
 
+        #region 永利登录、退出、检查登录模块
         public override bool InternalCheckLogin()
         {
             string url = siteConfig.Domain + "index.php/index/N_index";
@@ -30,54 +31,6 @@ namespace Bbin.Sniffer
             bool loginState = html.Contains(siteConfig.UserName);
             log.InfoFormat("【提示】登录状态:{0}", loginState);
             return loginState;
-        }
-
-        public override void InternalGetSessionId()
-        {
-            #region 
-            var url = siteConfig.Domain + "index.php/video/login?g_type=bbin";
-            log.InfoFormat("【提示】bbin跳转页 ,请求 Url:{0}", url);
-            var html = HttpUtil.DoGetAsycn(url, CookieContainer).Result;
-            log.DebugFormat("【提示】bbin跳转页 响应 Html:\r\n{0}", url);
-            #endregion
-
-            #region bbin
-            string partten = "<script type='text/javascript'>[\\s]+window.document.location=\"(.*?)\";[\\s]+</script>";
-            log.DebugFormat("【提示】bbin跳转页 正则:{0}", partten);
-            Regex reg = new Regex(partten, GetRegexOptions());
-            var match = reg.Match(html);
-            if (match.Success)
-            {
-                url = match.Groups[1].Value;
-                log.InfoFormat("【提示】请求bbin ,Url:{0}", url);
-                html = HttpUtil.DoGetAsycn(url, CookieContainer).Result;
-                log.DebugFormat("【提示】请求bbin, 响应 Html:\r\n{0}", html);
-
-                var cookies = CookieContainer.GetCookies(new Uri(url));
-
-                foreach (Cookie item in cookies)
-                {
-                    if (item.Name == "SESSION_ID")
-                    {
-                        SessionId = item.Value;
-                        break;
-                    }
-                }
-
-                if (!String.IsNullOrWhiteSpace(SessionId))
-                {
-                    log.InfoFormat("【提示】恭喜您，拿到 bbin sid:{0}", SessionId);
-                }
-                else
-                {
-                    log.Warn("【警告】抱歉，破解 bbin 登录失败");
-                }
-            }
-            else
-            {
-                log.Warn("【警告】bbin跳转页 响应结果无法匹配到响应的数据");
-            }
-            #endregion
         }
 
         public override bool InternalLogin()
@@ -134,8 +87,8 @@ namespace Bbin.Sniffer
 
             #region 
             url = siteConfig.Domain + "index.php/webcenter/Login/login_do";
-            //data = "r=" + DateTime.Now.ToFileTime() + "&action=login&username=" + siteConfig.UserName + "&password=" + siteConfig.PassWrod + "&vlcodes=null";
-            data = $"r={DateTime.Now.ToFileTime()}&action=login&username={siteConfig.UserName}&password={siteConfig.PassWrod}&vlcodes={code}";
+            //data = "r=" + DateTime.Now.ToFileTime() + "&action=login&username=" + siteConfig.UserName + "&password=" + siteConfig.PassWord + "&vlcodes=null";
+            data = $"r={DateTime.Now.ToFileTime()}&action=login&username={siteConfig.UserName}&password={siteConfig.PassWord}&vlcodes={code}";
             log.InfoFormat("【提示】请求 login_do ,请求 Url:{0} Data:{1}", url, data);
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
             httpWebRequest.Proxy = null;
@@ -185,6 +138,55 @@ namespace Bbin.Sniffer
         public override void InternalLogout()
         {
             log.Info("模拟退出登录");
+        } 
+        #endregion
+
+        public override void InternalGetBbinSessionId()
+        {
+            #region 
+            var url = siteConfig.Domain + "index.php/video/login?g_type=bbin";
+            log.InfoFormat("【提示】bbin跳转页 ,请求 Url:{0}", url);
+            var html = HttpUtil.DoGetAsycn(url, CookieContainer).Result;
+            log.DebugFormat("【提示】bbin跳转页 响应 Html:\r\n{0}", url);
+            #endregion
+
+            #region bbin
+            string partten = "<script type='text/javascript'>[\\s]+window.document.location=\"(.*?)\";[\\s]+</script>";
+            log.DebugFormat("【提示】bbin跳转页 正则:{0}", partten);
+            Regex reg = new Regex(partten, GetRegexOptions());
+            var match = reg.Match(html);
+            if (match.Success)
+            {
+                url = match.Groups[1].Value;
+                log.InfoFormat("【提示】请求bbin ,Url:{0}", url);
+                html = HttpUtil.DoGetAsycn(url, CookieContainer).Result;
+                log.DebugFormat("【提示】请求bbin, 响应 Html:\r\n{0}", html);
+
+                var cookies = CookieContainer.GetCookies(new Uri(url));
+
+                foreach (Cookie item in cookies)
+                {
+                    if (item.Name == "SESSION_ID")
+                    {
+                        SessionId = item.Value;
+                        break;
+                    }
+                }
+
+                if (!String.IsNullOrWhiteSpace(SessionId))
+                {
+                    log.InfoFormat("【提示】恭喜您，拿到 bbin sid:{0}", SessionId);
+                }
+                else
+                {
+                    log.Warn("【警告】抱歉，破解 bbin 登录失败");
+                }
+            }
+            else
+            {
+                log.Warn("【警告】bbin跳转页 响应结果无法匹配到响应的数据");
+            }
+            #endregion
         }
 
         /// <summary>

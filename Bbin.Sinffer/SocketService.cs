@@ -170,12 +170,12 @@ namespace Bbin.Sniffer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="completed"></param>
-        public void Send(string data)
+        public void SendAsync(string data, Action<bool> completed)
         {
             log.DebugFormat("【提示】发送数据:{0}", data);
             try
             {
-                WebSocket.Send(data);
+                WebSocket.SendAsync(data, completed);
             }
             catch (Exception e)
             {

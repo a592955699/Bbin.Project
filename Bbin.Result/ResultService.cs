@@ -65,16 +65,16 @@ namespace Bbin.Result
                         if(gameDbService.findByDateAndIndex(game.Date,game.Index)==null)
                         {
                             gameDbService.Insert(game);
-                            log.DebugFormat("【提示】靴不存在！新增靴!");
+                            log.InfoFormat($"【提示】靴不存在！新增靴!Rs: {result.Rs}");
                         }
                         else
                         {
-                            log.DebugFormat("【提示】靴已存在！不新增靴!");
+                            log.InfoFormat($"【提示】靴已存在！不新增靴!Rs: {result.Rs}");
                         }
                     }
                     if (resultDbService.findByRs(result.Rs) != null)
                     {
-                        log.DebugFormat("【提示】结果已存在！跳过后续操作!");
+                        log.InfoFormat($"【提示】结果已存在！跳过后续操作!Rs: {result.Rs}");
                         return;
                     }
                     else
@@ -88,7 +88,7 @@ namespace Bbin.Result
                     //1.处理好路
                     //2.处理下注
                     mqService.PublishResult(result.Rs);
-                    log.DebugFormat($"【提示】推送 Result 通知完毕 ResultId: {result.Rs}");
+                    log.InfoFormat($"【提示】推送 Result 通知完毕 Rs: {result.Rs}");
                 }
                 catch (Exception ex)
                 {
@@ -109,11 +109,15 @@ namespace Bbin.Result
                 isNew = true;
                 game = new GameEntity()
                 {
-                    Index = result.Index,
+                    RoomId = result.Game.RoomId,
                     DateTime = result.Begin,
                     Date = result.Game.Date,
-                    RoomId = result.Game.RoomId
+                    Index = result.Game.Index
                 };
+
+                log.InfoFormat("【提示】采集到 Round 结果(新的一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3}",
+                result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index);
+                return;
             }
             else
             {

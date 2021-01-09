@@ -9,7 +9,7 @@ namespace Bbin.SnifferInternalActionExecutors
         public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
         {
             var jsonString = JsonConvert.SerializeObject(data);
-            webSocketWrap.Send(jsonString);
+            webSocketWrap.SendAsync(jsonString, (x) => { });
         }
         public bool SetParams<T>(string name, T param, params object[] paras)
         {

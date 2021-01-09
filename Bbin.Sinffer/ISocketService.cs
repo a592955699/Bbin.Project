@@ -60,7 +60,7 @@ namespace Bbin.Sniffer
         void Connect(string sessionId);
         void Close();
         void Close(ushort code);
-        void Send(string data);
+        void SendAsync(string data, Action<bool> completed);
         string GetActionName(Dictionary<string, object> keyValues);
         #endregion
     }

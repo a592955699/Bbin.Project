@@ -9,6 +9,7 @@ using WebSocketSharp;
 using Bbin.Core.Configs;
 using Bbin.Core.Model;
 using Bbin.SnifferInternalActionExecutors;
+using System.Threading.Tasks;
 
 namespace Bbin.Sniffer
 {
@@ -170,12 +171,14 @@ namespace Bbin.Sniffer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="completed"></param>
-        public void SendAsync(string data, Action<bool> completed)
+        public void Send(string data)
         {
             log.DebugFormat("【提示】发送数据:{0}", data);
             try
             {
-                WebSocket.SendAsync(data, completed);
+                Task.Run(()=> {
+                    WebSocket.Send(data);
+                });
             }
             catch (Exception e)
             {

@@ -1,7 +1,7 @@
-﻿using Bbin.Api.Configs;
-using Bbin.Api.Cons;
-using Bbin.Api.Model;
-using Bbin.Api.Models;
+﻿using Bbin.Core.Configs;
+using Bbin.Core.Cons;
+using Bbin.Core.Model;
+using Bbin.Core.Models;
 using log4net;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -32,7 +32,7 @@ namespace Bbin.Result
             var channel = connection.CreateModel();
 
             //声明一个名称消息队列
-            //channel.QueueDeclare(RabbitMQCons.RoundQueue, false, false, false, null);
+            channel.QueueDeclare(RabbitMQCons.RoundQueue, false, false, false, null);
 
             //事件基本消费者
             EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
@@ -58,7 +58,7 @@ namespace Bbin.Result
             };
         }
 
-        public void PublishResult(long resultId)
+        public void PublishResult(string rs)
         {
             //实例化一个连接工厂和其配置为使用所需的主机，虚拟主机和证书（证书）
             ConnectionFactory factory = GetConnectionFactory(rabbitMQConfig);
@@ -73,7 +73,7 @@ namespace Bbin.Result
                     channel.QueueDeclare(RabbitMQCons.ManagerQueue, false, false, false, null);
 
                     //封装数据对象
-                    var queueModel = new QueueModel<long>(CommandKeys.PublishResult, resultId);
+                    var queueModel = new QueueModel<string>(CommandKeys.PublishResult, rs);
                     var sendBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueModel));
 
 

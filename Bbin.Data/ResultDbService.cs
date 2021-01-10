@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Bbin.Api.Entitys;
+using Bbin.Core.Entitys;
 
 namespace Bbin.Data
 {
@@ -13,9 +13,9 @@ namespace Bbin.Data
         {
             this.dbContext = _bbinDbContext;
         }
-        public ResultEntity findById(long resultId)
+        public ResultEntity findByRs(string rs)
         {
-            return dbContext.Results.FirstOrDefault(x => x.ResultId == resultId);
+            return dbContext.Results.FirstOrDefault(x => x.Rs == rs);
         }
 
         public List<ResultEntity> findList(long gameId)

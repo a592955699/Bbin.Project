@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bbin.Core.Configs;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,10 @@ namespace Bbin.Sniffer
 {
     public interface ISnifferService
     {
+        AbstractLoginService LoginService { get; }
+        ISocketService SocketService { get; }
+        IMQService MQService { get; }
+        bool Work { get; }
         /// <summary>
         /// 开始采集
         /// 操作动作：
@@ -27,5 +32,9 @@ namespace Bbin.Sniffer
         /// </summary>
         /// <returns></returns>
         bool IsConnect();
+        /// <summary>
+        /// 设置 sniffer 配置
+        /// </summary>
+        void SetSiteConfig(SiteConfig siteConfig);
     }
 }

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bbin.Api\Bbin.Api.csproj" />
+    <ProjectReference Include="..\Bbin.Core\Bbin.Core.csproj" />
   </ItemGroup>
 
 </Project>

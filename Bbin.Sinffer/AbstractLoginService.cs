@@ -1,5 +1,5 @@
-﻿using Bbin.Api.Entitys;
-using Bbin.Api.Cons;
+﻿using Bbin.Core.Entitys;
+using Bbin.Core.Cons;
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
 
 namespace Bbin.Sniffer
 {
@@ -52,14 +52,14 @@ namespace Bbin.Sniffer
         {
             if (CheckLogin())
             {
-                InternalGetSessionId();
+                InternalGetBbinSessionId();
                 return true;
             }
 
             var loginState = Login();
             if (!loginState)
                 return false;
-            InternalGetSessionId();
+            InternalGetBbinSessionId();
             return true;
         }
         /// <summary>
@@ -89,7 +89,12 @@ namespace Bbin.Sniffer
         public void Logout()
         {
             log.Debug("【提示】准备退出登录");
-            InternalLogout();
+            InternalLogout(); 
+        }
+
+        public void SetSiteConfig(SiteConfig siteConfig)
+        {
+            this.siteConfig = siteConfig;
         }
 
         /// <summary>
@@ -165,6 +170,22 @@ namespace Bbin.Sniffer
             }
         }
         /// <summary>
+        /// 清除 CookieContainer 缓存
+        /// </summary>
+        public virtual void ClearCookieContainer() {
+            CookieContainer  = new CookieContainer();
+            try
+            {
+                if (File.Exists(cookieFileName))
+                {
+                    File.Delete(cookieFileName);
+                }
+            }catch(Exception ex)
+            {
+                log.Error("【错误】清除缓存文件异常！",ex);
+            }
+        }
+        /// <summary>
         /// 具体判断登录逻辑
         /// </summary>
         /// <returns></returns>
@@ -178,11 +199,11 @@ namespace Bbin.Sniffer
         /// <summary>
         /// 具体获取 SessionId 逻辑
         /// </summary>
-        public abstract void InternalGetSessionId();
+        public abstract void InternalGetBbinSessionId();
         /// <summary>
         /// 退出登录
         /// </summary>
         /// <returns></returns>
-        public abstract void InternalLogout();
+        public abstract void InternalLogout();        
     }
 }

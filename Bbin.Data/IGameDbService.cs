@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Entitys;
+﻿using Bbin.Core.Entitys;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +8,7 @@ namespace Bbin.Data
     public interface IGameDbService
     {
         GameEntity findById(long gameId);
+        GameEntity findByDateAndIndex(string date, int index);
         bool Insert(GameEntity game);
 
         /// <summary>

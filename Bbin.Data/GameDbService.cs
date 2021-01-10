@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Entitys;
+﻿using Bbin.Core.Entitys;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +34,11 @@ namespace Bbin.Data
         public GameEntity GetLastGame(string roomId, string date)
         {
             return dbContext.Games.Where(x => x.RoomId == roomId && x.Date == date).OrderByDescending(x => x.DateTime).FirstOrDefault();
+        }
+
+        public GameEntity findByDateAndIndex(string date, int index)
+        {
+            return dbContext.Games.FirstOrDefault(x => x.Date == date && x.Index == index);
         }
     }
 }

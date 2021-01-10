@@ -1,6 +1,6 @@
 ﻿using System;
 using Bbin.Core;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using Bbin.Data;
 using Bbin.Result;
 using log4net;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
 
 namespace Bbin.ResultConsoleApp
 {
@@ -49,9 +49,6 @@ namespace Bbin.ResultConsoleApp
        Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                ApplicationContext.Configure(hostContext.Configuration);
-                ApplicationContext.Configure(services.BuildServiceProvider());
-
                 services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
                 services.AddScoped<IResultDbService, ResultDbService>();
                 services.AddScoped<IGameDbService, GameDbService>();
@@ -66,6 +63,9 @@ namespace Bbin.ResultConsoleApp
                 //services.AddDbContext<BbinDbContext>(options =>
                 //   options.UseMySql(Configuration.GetConnectionString("BbinDbContext")
                 //   , b => b.MigrationsAssembly("Bbin.ResultWebApp")));
+
+                ApplicationContext.Configuration = hostContext.Configuration;
+                ApplicationContext.ServiceProvider = services.BuildServiceProvider();
             });
     }
 }

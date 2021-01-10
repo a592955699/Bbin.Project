@@ -1,4 +1,4 @@
-﻿using Bbin.Api.Cons;
+﻿using Bbin.Core.Cons;
 using log4net;
 using System;
 using System.Drawing;

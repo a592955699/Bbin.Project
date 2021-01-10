@@ -1,16 +1,15 @@
-﻿using Bbin.Api.Entitys;
-using Bbin.Api.Eventargs;
-using Bbin.Api.Cons;
+﻿using Bbin.Core.Eventargs;
+using Bbin.Core.Cons;
 using Bbin.Sniffer.Cons;
-using Bbin.Sniffer.Actions;
 using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using WebSocketSharp;
-using Bbin.Api.Configs;
-using Bbin.Api.Model;
+using Bbin.Core.Configs;
+using Bbin.Core.Model;
+using Bbin.SnifferInternalActionExecutors;
+using System.Threading.Tasks;
 
 namespace Bbin.Sniffer
 {
@@ -177,7 +176,9 @@ namespace Bbin.Sniffer
             log.DebugFormat("【提示】发送数据:{0}", data);
             try
             {
-                WebSocket.Send(data);
+                Task.Run(()=> {
+                    WebSocket.Send(data);
+                });
             }
             catch (Exception e)
             {

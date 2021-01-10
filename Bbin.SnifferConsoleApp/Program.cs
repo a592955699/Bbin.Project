@@ -1,6 +1,6 @@
 ﻿using System;
 using Bbin.Core;
-using Bbin.Api.Cons;
+using Bbin.Core.Cons;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Bbin.Sniffer;
 using Bbin.BaiduAI.Config;
-using Bbin.Api.Configs;
+using Bbin.Core.Configs;
+using Bbin.Core.Commandargs;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Bbin.SnifferConsoleApp
 {
@@ -34,21 +38,66 @@ namespace Bbin.SnifferConsoleApp
                 try
                 {
                     var mqService = services.GetService<IMQService>();
+                    //侦听 ManagerExchange 
                     mqService.ListenerManager();
 
-                    var snifferService = services.GetService<ISnifferService>();
-                    snifferService.Start();
+                    ////需要执行的任务
+                    ////var mqService = ApplicationContext.ServiceProvider.GetService<IMQService>();
+                    //var socketService = ApplicationContext.ServiceProvider.GetService<ISocketService>();
+                    //var siteConfig = ApplicationContext.ServiceProvider.GetService<SiteConfig>();
+                    //SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
+                    //snifferUpArgs.QueueName = mqService.QueueName;
+                    //snifferUpArgs.UserName = siteConfig.UserName;
+                    //snifferUpArgs.Password = siteConfig.PassWord;
+                    //snifferUpArgs.Connected = socketService.IsConnect;
+
+                    ////上线通知 ManagerQueue
+                    //mqService.PublishUp(snifferUpArgs);
+                    //log.Info($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
+
+
+                    Task.Run(async () =>
+                    {
+                        while(true)
+                        {
+                            using (var scope = host.Services.CreateScope())
+                            {
+                                var services = scope.ServiceProvider;
+
+                                var mqService = services.GetService<IMQService>();
+                                var snifferService = ApplicationContext.ServiceProvider.GetService<ISnifferService>();
+                                var siteConfig = services.GetService<SiteConfig>();
+                                SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
+                                snifferUpArgs.QueueName = mqService.QueueName;
+                                snifferUpArgs.UserName = siteConfig.UserName;
+                                snifferUpArgs.PassWord = siteConfig.PassWord;
+                                snifferUpArgs.Connected = snifferService.IsConnect();
+                                snifferUpArgs.Work = snifferService.Work;
+
+                                //上线通知 ManagerQueue
+                                mqService.PublishUp(snifferUpArgs);
+                                log.Debug($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
+                            }
+                            await Task.Delay(10000);
+                        }
+                    });
+
+                    //开始采集
+                    //var snifferService = services.GetService<ISnifferService>();
+                    //snifferService.Start();
                 }
                 catch (Exception ex)
                 {
                     log.Error("An error occurred while seeding the database.", ex);
                 }
+               
                 host.Run();
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
@@ -60,6 +109,11 @@ namespace Bbin.SnifferConsoleApp
                 services.AddSingleton<IMQService, RabbitMQService>();
                 services.AddSingleton<ISocketService, SocketService>();
                 services.AddSingleton<ISnifferService, SnifferService>();
+
+                ApplicationContext.Configuration = hostContext.Configuration;
+                ApplicationContext.ServiceProvider = services.BuildServiceProvider();
             });
+        }
+            
     }
 }

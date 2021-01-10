@@ -108,7 +108,12 @@ namespace Bbin.Sniffer
 
         private void WebSocketWrap_OnFullResult(object sender, EventArgs e)
         {
-            var eventArgs = (FullResultEventArgs)e;            
+            var eventArgs = (FullResultEventArgs)e;  
+            if(string.IsNullOrWhiteSpace(eventArgs.Round.Pk))
+            {
+                log.Info($"【提示】采集全部结果为空 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
+                return;
+            }
             log.Info($"【提示】采集全部结果 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
             MQService.PublishRound(eventArgs.Round);
             log.Info($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");

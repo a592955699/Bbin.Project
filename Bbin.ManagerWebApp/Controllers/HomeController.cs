@@ -33,7 +33,7 @@ namespace Bbin.ManagerWebApp.Controllers
         /// <returns></returns>
         public IActionResult Index()
         {
-            return View(_managerApplicationContext.Sniffers);
+            return View(_managerApplicationContext.Sniffers.OrderBy(x => x.QueueName));
         }
         [HttpGet]
         public IActionResult Start(string queueName)

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bbin.Manager.ActionExecutors
 {
@@ -19,7 +20,7 @@ namespace Bbin.Manager.ActionExecutors
             string jsonString = args.ToString();
             var queueModel = JsonConvert.DeserializeObject<QueueModel<SnifferUpArgs>>(jsonString);
             
-            var managerApplicationContext = (ManagerApplicationContext)ApplicationContext.ServiceProvider.GetService(typeof(ManagerApplicationContext));
+            var managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
             managerApplicationContext.AddSniffers(queueModel.Data);
 
             //#TODO 模拟发动采集申请

@@ -7,8 +7,8 @@ namespace Bbin.Data
 {
     public interface IGameDbService
     {
-        GameEntity findById(long gameId);
-        GameEntity findByDateAndIndex(string date, int index);
+        GameEntity FindById(long gameId);
+        GameEntity FindByDateAndIndex(string date, int index);
         bool Insert(GameEntity game);
 
         /// <summary>
@@ -17,6 +17,6 @@ namespace Bbin.Data
         /// <param name="roomId"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        GameEntity GetLastGame(string roomId, string date);
+        GameEntity FindLastGame(string roomId, string date);
     }
 }

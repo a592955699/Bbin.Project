@@ -61,7 +61,7 @@ namespace Bbin.Manager
                 IActionExecutor actionExecutor;
                 if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
                 {
-                    log.Warn($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
+                    log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
                     actionExecutor.DoExcute(message);
                 }
                 else
@@ -88,6 +88,7 @@ namespace Bbin.Manager
         {
             Dictionary<string, IActionExecutor> keyValues = new Dictionary<string, IActionExecutor>();
             keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
+            keyValues.Add(CommandKeys.PublishResult, new PublishResultActionExcutor());
             return keyValues;
         }
     }

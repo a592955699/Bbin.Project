@@ -11,7 +11,7 @@ namespace Bbin.Core.Extensions
     public static class RecommendExtensions
     {
         /// <summary>
-        /// 是否推荐
+        /// 好路推荐
         /// </summary>
         /// <param name="resultEntities">结果集合</param>
         /// <param name="recommendTemplate">好路推荐模板设置</param>
@@ -104,7 +104,7 @@ namespace Bbin.Core.Extensions
             return match;
         }
         /// <summary>
-        /// 满足任意一个
+        /// 满足任意一个好路推荐
         /// </summary>
         /// <param name="resultEntities"></param>
         /// <param name="recommendTemplates"></param>
@@ -120,7 +120,7 @@ namespace Bbin.Core.Extensions
             return false;
         }
         /// <summary>
-        /// 满足所有
+        /// 满足所有好路推荐
         /// </summary>
         /// <param name="resultEntities"></param>
         /// <param name="recommendTemplates"></param>
@@ -134,6 +134,47 @@ namespace Bbin.Core.Extensions
                     return false;
             }
             return true;
+        }
+        /// <summary>
+        /// 推荐下注设置
+        /// </summary>
+        /// <param name="recommendTemplate"></param>
+        /// <param name="betState"></param>
+        /// <returns></returns>
+        public static bool IsRecommendBet(this RecommendTemplateModel recommendTemplate,out ResultState betState)
+        {
+            betState = ResultState.UnKnown;
+            if (recommendTemplate.Items == null || recommendTemplate.Items.Count == 0)
+                return false;
+            var first = recommendTemplate.Items.OrderBy(x => x.Id).FirstOrDefault();
+            if (first.ResultState == ResultState.UnKnown || first.ResultState == ResultState.He)
+                return false;
+            if (recommendTemplate.Template.RecommendType == RecommendTypeEnum.Break)
+            {
+                betState = (first.ResultState == ResultState.XianJia) ? ResultState.ZhuangJia : ResultState.XianJia;
+            }
+            else
+            {
+                betState = first.ResultState;
+            }
+            return true;
+        }
+
+        public static List<RecommendTemplateModel> ToRecommendTemplateModel(List<RecommendTemplateEntity> recommendTemplates,List<RecommendItemEntity> recommendItems)
+        {
+            
+            List<RecommendTemplateModel> recommendTemplateModels = new List<RecommendTemplateModel>();
+            if (recommendTemplates == null || recommendItems == null)
+                return recommendTemplateModels;
+            foreach (var template in recommendTemplates)
+            {
+                var items = recommendItems.Where(x => x.RecommendTemplateId == template.Id).OrderBy(x => x.Id).ToList();
+                if(items.Any())
+                {
+                    recommendTemplateModels.Add(new RecommendTemplateModel(template,items));
+                }
+            }
+            return recommendTemplateModels;
         }
     }
 }

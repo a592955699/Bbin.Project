@@ -1,9 +1,14 @@
-﻿using Bbin.Core.Commandargs;
+﻿using Bbin.Core;
+using Bbin.Core.Commandargs;
+using Bbin.Core.Models;
+using Bbin.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Bbin.Core.Extensions;
 
 namespace Bbin.Manager
 {
@@ -30,9 +35,27 @@ namespace Bbin.Manager
                     await Task.Delay(1000);
                 }
             });
-            
+            InitRecommendTemplateModels();
         }
+        /// <summary>
+        /// 获取下注推荐设置
+        /// </summary>
+        public void InitRecommendTemplateModels()
+        {
+            var recommendTemplateService = ApplicationContext.ServiceProvider.GetService<IRecommendTemplateService>();
+            var recommendItemService = ApplicationContext.ServiceProvider.GetService<IRecommendItemService>();
+            var templates = recommendTemplateService.FindAll(true);
+            var items = recommendItemService.FindAll();
+            RecommendExtensions.ToRecommendTemplateModel(templates, items);
+        }
+        /// <summary>
+        /// 好路推荐+推荐下注配置
+        /// </summary>
+        public List<RecommendTemplateModel> RecommendTemplateModels { get; set; }
 
+        /// <summary>
+        /// Sniffer 采集服务配置
+        /// </summary>
         public List<SnifferUpArgs> Sniffers = new List<SnifferUpArgs>();
 
         /// <summary>

@@ -1,9 +1,11 @@
 using Bbin.Core;
 using Bbin.Core.Configs;
+using Bbin.Data;
 using Bbin.Manager;
 using Bbin.Manager.ActionExecutors;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +31,19 @@ namespace Bbin.ManagerWebApp
             services.AddSingleton<IMQService, RabbitMQService>();
             services.AddSingleton<ManagerApplicationContext>();
             services.AddScoped<PublishSnifferUpActionExecutor>();
+            services.AddScoped<PublishResultActionExcutor>();
+
+
+            services.AddDbContext<BbinDbContext>(options =>
+                   options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
+                   , b => b.MigrationsAssembly("Bbin.ManagerWebApp"))
+                );
+            services.AddScoped<IResultDbService, ResultDbService>();
+            services.AddScoped<IGameDbService, GameDbService>();
+            services.AddScoped<IRecommendItemService, RecommendItemService>();
+            services.AddScoped<IRecommendTemplateService, RecommendTemplateService>();
         }
+       
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

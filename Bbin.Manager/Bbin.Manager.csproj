@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bbin.Core\Bbin.Core.csproj" />
+    <ProjectReference Include="..\Bbin.Data\Bbin.Data.csproj" />
   </ItemGroup>
 
 </Project>

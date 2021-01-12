@@ -15,7 +15,7 @@ namespace Bbin.Data
         {
             this.dbContext = _bbinDbContext;
         }
-        public GameEntity findById(long gameId)
+        public GameEntity FindById(long gameId)
         {
             return dbContext.Games.FirstOrDefault(x => x.GameId == gameId);
         }
@@ -31,12 +31,12 @@ namespace Bbin.Data
         /// <param name="roomId"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public GameEntity GetLastGame(string roomId, string date)
+        public GameEntity FindLastGame(string roomId, string date)
         {
             return dbContext.Games.Where(x => x.RoomId == roomId && x.Date == date).OrderByDescending(x => x.DateTime).FirstOrDefault();
         }
 
-        public GameEntity findByDateAndIndex(string date, int index)
+        public GameEntity FindByDateAndIndex(string date, int index)
         {
             return dbContext.Games.FirstOrDefault(x => x.Date == date && x.Index == index);
         }

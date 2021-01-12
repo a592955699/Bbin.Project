@@ -49,7 +49,7 @@ namespace Bbin.Result
                         log.Warn($"【警告】Round 转 Result 失败！{ JsonConvert.SerializeObject(round)}");
                         return;
                     }
-                    if (resultDbService.findByRs(result.Rs) != null)
+                    if (resultDbService.FindByRs(result.Rs) != null)
                     {
                         log.Info($"【提示】结果已存在！跳过后续操作！{JsonConvert.SerializeObject(round)}");
                         return;
@@ -67,7 +67,7 @@ namespace Bbin.Result
                     //#TODO 事物处理
                     if (isNes)
                     {
-                        if(gameDbService.findByDateAndIndex(game.Date,game.Index)==null)
+                        if(gameDbService.FindByDateAndIndex(game.Date,game.Index)==null)
                         {
                             gameDbService.Insert(game);
                             log.Info($"【提示】靴不存在！新增靴! {JsonConvert.SerializeObject(result)}");
@@ -129,7 +129,7 @@ namespace Bbin.Result
             }
             else
             {
-                var preResult = resultDbService.GetResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
+                var preResult = resultDbService.FindResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
                 //连续的近两局,表示是同一靴
                 //获取上一局的结果中的 Game
                 if (preResult != null)
@@ -144,7 +144,7 @@ namespace Bbin.Result
                 //获取上一局的结果中的 Game
                 if (preResult == null)
                 {
-                    preResult = resultDbService.GetResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
+                    preResult = resultDbService.FindResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
                     if (preResult != null && (round.Begin - preResult.Begin).TotalSeconds < 300)//相差5分钟内的，算同一局
                     {
                         game = preResult.Game;
@@ -155,7 +155,7 @@ namespace Bbin.Result
                 }
 
                 //这一桌 date 的最后一靴
-                var lastGame = gameDbService.GetLastGame(result.Game.RoomId, result.Game.Date);
+                var lastGame = gameDbService.FindLastGame(result.Game.RoomId, result.Game.Date);
                 if (lastGame != null)
                 {
                     //当前靴是 date 的最后一靴
@@ -187,7 +187,7 @@ namespace Bbin.Result
 
 
                 //这一桌 yesterdayDate 的最后一靴
-                var yesterdayLastGame = gameDbService.GetLastGame(result.Game.RoomId, result.Game.Date);
+                var yesterdayLastGame = gameDbService.FindLastGame(result.Game.RoomId, result.Game.Date);
                 if (yesterdayLastGame != null)
                 {
                     //当前靴是 yesterdayDate 的最后一靴

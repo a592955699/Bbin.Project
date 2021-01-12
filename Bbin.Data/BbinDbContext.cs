@@ -12,6 +12,8 @@ namespace Bbin.Data
         {
         }
 
+        public DbSet<RecommendTemplateEntity> RecommendTemplates { get; set; }
+        public DbSet<RecommendItemEntity> RecommendItems { get; set; }
 
         public DbSet<GameEntity> Games { get; set; }
         public DbSet<ResultEntity> Results { get; set; }
@@ -29,7 +31,17 @@ namespace Bbin.Data
                 eb.HasIndex(c => new { c.RoomId, c.Index, c.Date });
             });
 
-            modelBuilder.Entity<ResultEntity>().ToTable("Result");
+            modelBuilder.Entity<ResultEntity>(eb=> {
+                eb.ToTable("Result");
+            });
+
+            modelBuilder.Entity<RecommendTemplateEntity>(eb=> {
+                eb.ToTable("RecommendTemplate");                
+            });
+
+            modelBuilder.Entity<RecommendItemEntity>(eb=> {
+                eb.ToTable("RecommendItem");
+            });
 
             modelBuilder.Entity<ResultEntity>(eb =>
             {

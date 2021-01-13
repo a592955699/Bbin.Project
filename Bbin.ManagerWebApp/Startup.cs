@@ -28,6 +28,7 @@ namespace Bbin.ManagerWebApp
             services.AddControllersWithViews();
 
             services.AddSingleton(Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
+            services.AddSingleton(Configuration.GetSection("BbinConfig").Get<BbinConfig>());
             services.AddSingleton<IMQService, RabbitMQService>();
             services.AddSingleton<ManagerApplicationContext>();
             services.AddScoped<PublishSnifferUpActionExecutor>();

@@ -16,11 +16,18 @@ namespace Bbin.Manager
     public class RabbitMQService : IMQService
     {
         private readonly RabbitMQConfig rabbitMQConfig;
+        PublishSnifferUpActionExecutor publishSnifferUpActionExecutor;
+        PublishResultActionExcutor publishResultActionExcutor;
+
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(RabbitMQService));
         private readonly Dictionary<string, IActionExecutor> ActionExecutors;
-        public RabbitMQService(RabbitMQConfig _rabbitMQConfig)
+        public RabbitMQService(RabbitMQConfig _rabbitMQConfig
+            , PublishSnifferUpActionExecutor _publishSnifferUpActionExecutor
+            , PublishResultActionExcutor _publishResultActionExcutor)
         {
             rabbitMQConfig = _rabbitMQConfig;
+            publishResultActionExcutor = _publishResultActionExcutor;
+            publishSnifferUpActionExecutor = _publishSnifferUpActionExecutor;
             ActionExecutors = GetActionExecutors();
         }
 
@@ -95,8 +102,11 @@ namespace Bbin.Manager
         private Dictionary<string, IActionExecutor> GetActionExecutors()
         {
             Dictionary<string, IActionExecutor> keyValues = new Dictionary<string, IActionExecutor>();
-            keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
-            keyValues.Add(CommandKeys.PublishResult, new PublishResultActionExcutor());
+            //keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
+            //keyValues.Add(CommandKeys.PublishResult, new PublishResultActionExcutor());
+
+            keyValues.Add(CommandKeys.PublishSnifferUp,publishSnifferUpActionExecutor);
+            keyValues.Add(CommandKeys.PublishResult, publishResultActionExcutor);
             return keyValues;
         }
     }

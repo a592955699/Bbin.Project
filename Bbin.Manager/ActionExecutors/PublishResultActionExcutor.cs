@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Bbin.Core.Extensions;
 using Bbin.Core.Enums;
+using Bbin.Core.Configs;
 
 namespace Bbin.Manager.ActionExecutors
 {
@@ -24,6 +25,7 @@ namespace Bbin.Manager.ActionExecutors
 
             var rs =  queueModel.Data;
             var resultDbService = ApplicationContext.ServiceProvider.GetService<IResultDbService>();
+            var bbinConfig = ApplicationContext.ServiceProvider.GetService<BbinConfig>();
             var result = resultDbService.FindByRs(rs);
             if (result == null)
             {
@@ -50,11 +52,11 @@ namespace Bbin.Manager.ActionExecutors
             ResultState betState;
             foreach (var recommendTemplateModel in managerApplicationContext.RecommendTemplateModels)
             {
-                if(results.IsRecommend(recommendTemplateModel) && recommendTemplateModel.IsRecommendBet(out betState))
+                if(results.IsRecommend(recommendTemplateModel,result) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
                     recommendBet.Add(recommendTemplateModel.Template.Id, betState);
-                    log.Info($"【提示】rs:{rs} 对应的 GameId:{result.Game.GameId} 推荐下注 {betState}！推荐策略 Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
-                    Console.WriteLine($"【提示】rs:{rs} 对应的 GameId:{result.Game.GameId} 推荐下注 {betState}！");
+                    log.Info($"【提示】RoomId:{result.Game.RoomId} RoomName:{bbinConfig.GetRoomName(result.Game.RoomId)} GameId:{result.Game.GameId} rs:{rs} 推荐下注 {betState}！推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
+                    Console.WriteLine($"【提示】RoomId:{result.Game.RoomId} RoomName:{bbinConfig.GetRoomName(result.Game.RoomId)} GameId:{result.Game.GameId} rs:{rs} 推荐下注 {betState}！推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
                 }
             }
 

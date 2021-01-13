@@ -47,26 +47,34 @@ namespace Bbin.Manager
             //接收到消息事件
             consumer.Received += (ch, ea) =>
             {
-                //处理收到的数据并打印
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
+                try
+                {
+                    //处理收到的数据并打印
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
 
-                var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
-                if (queueModel == null)
-                {
-                    log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue}  Body:{message} 接收数据序列化为 null");
-                    return;
-                }
+                    var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
+                    if (queueModel == null)
+                    {
+                        log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue}  Body:{message} 接收数据序列化为 null");
+                        return;
+                    }
 
-                IActionExecutor actionExecutor;
-                if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
-                {
-                    log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
-                    actionExecutor.DoExcute(message);
+                    IActionExecutor actionExecutor;
+                    if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
+                    {
+                        log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
+                        actionExecutor.DoExcute(message);
+                    }
+                    else
+                    {
+                        log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue} 不识别命令:{queueModel.Key}");
+                        return;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue} 不识别命令:{queueModel.Key}");
+                    log.Error($"【错误】侦听 Queue:{RabbitMQCons.ManagerQueue} 异常!",ex);
                     return;
                 }
             };

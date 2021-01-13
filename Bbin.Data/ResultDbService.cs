@@ -15,12 +15,12 @@ namespace Bbin.Data
         }
         public ResultEntity FindByRs(string rs)
         {
-            return dbContext.Results.FirstOrDefault(x => x.Rs == rs);
+            return dbContext.Results.Include(x=>x.Game).FirstOrDefault(x => x.Rs == rs);
         }
 
         public List<ResultEntity> FindList(long gameId)
         {
-            return dbContext.Results.Where(x => x.Game.GameId == gameId).OrderByDescending(x=>x.Index).ToList();
+            return dbContext.Results.Where(x => x.Game.GameId == gameId).OrderBy(x=>x.Index).ToList();
         }
 
         public bool Insert(ResultEntity result)

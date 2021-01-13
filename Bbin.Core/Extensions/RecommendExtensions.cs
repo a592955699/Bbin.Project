@@ -24,15 +24,15 @@ namespace Bbin.Core.Extensions
             if (resultEntities.Count < recommendTemplate.Items.Sum(x => x.Times))
                 return false;
 
-            //倒序处理
+            //升序处理
             var items = recommendTemplate.Items.OrderBy(x => x.Id).ToList();
-            var results = resultEntities.OrderBy(x => x.Rn).ToList();
+            var results = resultEntities.OrderBy(x=>x.Game.GameId).ThenBy(x => x.Index).ToList();
 
             var match = true;
 
 
             RecommendItemEntity lastItem;
-            ResultEntity lastResult;
+            ResultEntity lastResult = null;
             //处理过的结果数量，每判断一个结果，就递增+1
             int skipResultIndex = 0;
             for (int itemsIndex = items.Count - 1; itemsIndex >= 0; itemsIndex--)
@@ -45,6 +45,11 @@ namespace Bbin.Core.Extensions
                     #region 循环结果
                     for (int resultsIndex = results.Count - 1 - (skipResultIndex++); resultsIndex >= 0; resultsIndex--)
                     {
+                        //两次结果是否有间隙
+                        if (lastResult != null && lastResult.Index - results[resultsIndex].Index != 1)
+                        {
+                            return false;
+                        }
                         lastResult = results[resultsIndex];
 
                         if(lastResult.ResultState==ResultState.UnKnown)

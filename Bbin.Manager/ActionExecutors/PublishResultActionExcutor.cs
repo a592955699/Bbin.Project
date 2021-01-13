@@ -53,7 +53,7 @@ namespace Bbin.Manager.ActionExecutors
                 if(results.IsRecommend(recommendTemplateModel) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
                     recommendBet.Add(recommendTemplateModel.Template.Id, betState);
-                    log.Info($"【提示】rs:{rs} 对应的 GameId:{result.Game.GameId} 推荐下注 {betState}！");
+                    log.Info($"【提示】rs:{rs} 对应的 GameId:{result.Game.GameId} 推荐下注 {betState}！推荐策略 Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
                     Console.WriteLine($"【提示】rs:{rs} 对应的 GameId:{result.Game.GameId} 推荐下注 {betState}！");
                 }
             }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bbin.ResultConsoleApp.Migrations
 {
     [DbContext(typeof(BbinDbContext))]
-    [Migration("20210112135542_Init")]
-    partial class Init
+    [Migration("20210113123501_DbInit")]
+    partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("Bbin.Core.Entitys.Game", b =>
+            modelBuilder.Entity("Bbin.Core.Entitys.GameEntity", b =>
                 {
                     b.Property<long>("GameId")
                         .ValueGeneratedOnAdd()
@@ -145,7 +145,7 @@ namespace Bbin.ResultConsoleApp.Migrations
 
             modelBuilder.Entity("Bbin.Core.Entitys.ResultEntity", b =>
                 {
-                    b.HasOne("Bbin.Core.Entitys.Game", "Game")
+                    b.HasOne("Bbin.Core.Entitys.GameEntity", "Game")
                         .WithMany()
                         .HasForeignKey("GameId");
 

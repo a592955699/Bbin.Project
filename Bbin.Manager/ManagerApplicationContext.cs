@@ -46,7 +46,7 @@ namespace Bbin.Manager
             var recommendItemService = ApplicationContext.ServiceProvider.GetService<IRecommendItemService>();
             var templates = recommendTemplateService.FindAll(true);
             var items = recommendItemService.FindAll();
-            RecommendExtensions.ToRecommendTemplateModel(templates, items);
+            RecommendTemplateModels = RecommendExtensions.ToRecommendTemplateModel(templates, items);
         }
         /// <summary>
         /// 好路推荐+推荐下注配置

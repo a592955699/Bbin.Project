@@ -18,7 +18,7 @@ namespace Bbin.Data
         {
             var query = dbContext.RecommendTemplates.AsQueryable();
             if (publish.HasValue)
-                query =  query.Where(x => x.Publish == publish.Value);
+                query = query.Where(x => x.Publish == publish.Value).OrderByDescending(x => x.Sort);
             return query.ToList();
         }
     }

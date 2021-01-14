@@ -52,11 +52,11 @@ namespace Bbin.Manager.ActionExecutors
             ResultState betState;
             foreach (var recommendTemplateModel in managerApplicationContext.RecommendTemplateModels)
             {
-                if(results.IsRecommend(recommendTemplateModel,result) && recommendTemplateModel.IsRecommendBet(out betState))
+                if(results.IsRecommend(recommendTemplateModel, result.Index) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
                     recommendBet.Add(recommendTemplateModel.Template.Id, betState);
-                    log.Info($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name} 推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
-                    Console.WriteLine($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name} 推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}" );
+                    log.Info($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
+                    Console.WriteLine($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
                 }
             }
 

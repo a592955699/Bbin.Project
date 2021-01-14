@@ -27,7 +27,7 @@ namespace Bbin.ManagerWebApp
             //    new ResultEntity(){ Index=2,ResultState=Core.Enums.ResultState.He},
             //    new ResultEntity(){ Index=3,ResultState=Core.Enums.ResultState.ZhuangJia},
             //    new ResultEntity(){ Index=4,ResultState=Core.Enums.ResultState.ZhuangJia},
-            //    new ResultEntity(){ Index=4,ResultState=Core.Enums.ResultState.ZhuangJia},
+            //    new ResultEntity(){ Index=5,ResultState=Core.Enums.ResultState.ZhuangJia},
             //};
             //RecommendTemplateModel templateModel = new RecommendTemplateModel()
             //{
@@ -36,7 +36,7 @@ namespace Bbin.ManagerWebApp
             //        new RecommendItemEntity(){ Id=1,ResultState=Core.Enums.ResultState.ZhuangJia,Times=5},
             //    }
             //};
-            //var test =  resultEntities.IsRecommend(templateModel);
+            //var test =  resultEntities.IsRecommend(templateModel,5);
 
 
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Manager 端)!本程序只是做学习交流使用，请勿用于商业用途！");

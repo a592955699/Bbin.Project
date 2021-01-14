@@ -28,6 +28,10 @@ namespace Bbin.Core.Entitys
         /// </summary>
         public bool Publish { get; set; }
         /// <summary>
+        /// 规则优先级，倒序
+        /// </summary>
+        public int Sort { get; set; }
+        /// <summary>
         /// 下注推荐规则
         /// </summary>
         public RecommendTypeEnum RecommendType { get; set; }

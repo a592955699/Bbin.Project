@@ -110,10 +110,18 @@ namespace Bbin.Core.Extensions
             for (int itemIndex = recommendTemplate.Items.Count - 1; itemIndex >= 0; itemIndex--)
             {
                 lastCol = colResults[colResults.Count - 1 - (colSkip++)];
-                lastColState = lastCol[lastCol.Count - 1];
+
+                //去除和了后，如果没数据，则跳过
+                var tempCol = lastCol.Where(x => x != ResultState.He).ToList();
+                if(!tempCol.Any())
+                {
+                    continue;
+                }
+
+                lastColState = tempCol[tempCol.Count - 1];
 
                 lastRecommendItem = recommendTemplate.Items[itemIndex];
-                if (lastRecommendItem.ResultState != lastColState || lastRecommendItem.Times != lastCol.Count)
+                if (lastRecommendItem.ResultState != lastColState || lastRecommendItem.Times != tempCol.Count)
                 {
                     match = false;
                     break;

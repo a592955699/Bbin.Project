@@ -33,6 +33,7 @@ namespace Bbin.Data
 
             modelBuilder.Entity<ResultEntity>(eb=> {
                 eb.ToTable("Result");
+                eb.HasIndex(c => c.Index);
             });
 
             modelBuilder.Entity<RecommendTemplateEntity>(eb=> {

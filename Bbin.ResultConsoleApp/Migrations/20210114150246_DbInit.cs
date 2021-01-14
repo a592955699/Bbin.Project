@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace Bbin.ResultConsoleApp.Migrations
 {
-    public partial class Init : Migration
+    public partial class DbInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,11 +12,11 @@ namespace Bbin.ResultConsoleApp.Migrations
                 name: "Game",
                 columns: table => new
                 {
-                    GameId = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoomId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Index = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    GameId = table.Column<long>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    RoomId = table.Column<string>(nullable: true),
+                    Index = table.Column<int>(nullable: false),
+                    Date = table.Column<string>(nullable: true),
                     DateTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
@@ -27,11 +28,11 @@ namespace Bbin.ResultConsoleApp.Migrations
                 name: "RecommendItem",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RecommendTemplateId = table.Column<int>(type: "int", nullable: false),
-                    ResultState = table.Column<int>(type: "int", nullable: false),
-                    Times = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    RecommendTemplateId = table.Column<int>(nullable: false),
+                    ResultState = table.Column<int>(nullable: false),
+                    Times = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,12 +43,13 @@ namespace Bbin.ResultConsoleApp.Migrations
                 name: "RecommendTemplate",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Describe = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Publish = table.Column<bool>(type: "bit", nullable: false),
-                    RecommendType = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    Describe = table.Column<string>(nullable: true),
+                    Publish = table.Column<bool>(nullable: false),
+                    Sort = table.Column<int>(nullable: false),
+                    RecommendType = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,19 +60,19 @@ namespace Bbin.ResultConsoleApp.Migrations
                 name: "Result",
                 columns: table => new
                 {
-                    Rs = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameId = table.Column<long>(type: "bigint", nullable: true),
-                    Index = table.Column<int>(type: "int", nullable: false),
-                    Rn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card5 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Card6 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    ResultState = table.Column<int>(type: "int", nullable: false),
-                    Begin = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Rs = table.Column<string>(nullable: false),
+                    GameId = table.Column<long>(nullable: true),
+                    Index = table.Column<int>(nullable: false),
+                    Rn = table.Column<string>(nullable: true),
+                    Card1 = table.Column<string>(nullable: true),
+                    Card2 = table.Column<string>(nullable: true),
+                    Card3 = table.Column<string>(nullable: true),
+                    Card4 = table.Column<string>(nullable: true),
+                    Card5 = table.Column<string>(nullable: true),
+                    Card6 = table.Column<string>(nullable: true),
+                    Number = table.Column<int>(nullable: false),
+                    ResultState = table.Column<int>(nullable: false),
+                    Begin = table.Column<DateTime>(nullable: false),
                     End = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
@@ -93,6 +95,11 @@ namespace Bbin.ResultConsoleApp.Migrations
                 name: "IX_Result_GameId",
                 table: "Result",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Result_Index",
+                table: "Result",
+                column: "Index");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

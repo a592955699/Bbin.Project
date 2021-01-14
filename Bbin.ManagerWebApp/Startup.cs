@@ -28,17 +28,21 @@ namespace Bbin.ManagerWebApp
             services.AddControllersWithViews();
 
             services.AddSingleton(Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
-            services.AddSingleton(Configuration.GetSection("BbinConfig").Get<BbinConfig>());
             services.AddSingleton<IMQService, RabbitMQService>();
             services.AddSingleton<ManagerApplicationContext>();
             services.AddScoped<PublishSnifferUpActionExecutor>();
             services.AddScoped<PublishResultActionExcutor>();
 
 
+            //services.AddDbContext<BbinDbContext>(options =>
+            //       options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
+            //       , b => b.MigrationsAssembly("Bbin.ManagerWebApp"))
+            //    );
+
             services.AddDbContext<BbinDbContext>(options =>
-                   options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
-                   , b => b.MigrationsAssembly("Bbin.ManagerWebApp"))
-                );
+            options.UseMySQL(Configuration.GetConnectionString("BbinDbContext")
+               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
+
             services.AddScoped<IResultDbService, ResultDbService>();
             services.AddScoped<IGameDbService, GameDbService>();
             services.AddScoped<IRecommendItemService, RecommendItemService>();

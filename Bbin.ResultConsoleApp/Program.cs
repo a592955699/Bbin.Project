@@ -55,14 +55,14 @@ namespace Bbin.ResultConsoleApp
                 services.AddScoped<IMQService, RabbitMQService>();
                 services.AddScoped<IResultService, ResultService>();
 
-                services.AddDbContext<BbinDbContext>(options =>
-                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
-                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
-                );
-
                 //services.AddDbContext<BbinDbContext>(options =>
-                //   options.UseMySql(Configuration.GetConnectionString("BbinDbContext")
-                //   , b => b.MigrationsAssembly("Bbin.ResultWebApp")));
+                //   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
+                //   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+                //);
+             
+                services.AddDbContext<BbinDbContext>(options => 
+                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
+                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
 
                 ApplicationContext.Configuration = hostContext.Configuration;
                 ApplicationContext.ServiceProvider = services.BuildServiceProvider();

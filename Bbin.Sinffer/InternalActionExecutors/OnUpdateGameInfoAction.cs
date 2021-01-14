@@ -20,7 +20,7 @@ namespace Bbin.SnifferInternalActionExecutors
         /// <summary>
         /// 过滤采集的牌桌
         /// </summary>
-        public Dictionary<string, string> TableMap { get; private set; } = new Dictionary<string, string>();
+        public List<string> TableMap { get; private set; } = new List<string>();
         Dictionary<string, RoundModel> RnRsMap { get; set; } = new Dictionary<string, RoundModel>();
 
         public OnUpdateGameInfoAction()
@@ -32,7 +32,7 @@ namespace Bbin.SnifferInternalActionExecutors
             //TableMap.Add("3001-37", "极速百家乐J");
             //TableMap.Add("3001-42", "竞咪M5");
             var bbinConfig = ApplicationContext.Configuration.GetSection("BbinConfig").Get<BbinConfig>();
-            if(bbinConfig != null && bbinConfig.Rooms!=null)
+            if (bbinConfig != null && bbinConfig.Rooms != null)
             {
                 TableMap = bbinConfig.Rooms;
             }
@@ -46,7 +46,7 @@ namespace Bbin.SnifferInternalActionExecutors
 
             foreach (KeyValuePair<string, Dictionary<string, object>> keyValue in slDict)
             {
-                if (TableMap.Count != 0 && !TableMap.ContainsKey(keyValue.Key))
+                if (TableMap.Count != 0 && !TableMap.Contains(keyValue.Key))
                     continue;
 
                 RoundModel round = new RoundModel();
@@ -148,10 +148,10 @@ namespace Bbin.SnifferInternalActionExecutors
                 {
                     TableMap.Clear();
                     RnRsMap.Clear();
-                    foreach (var item in (param as Dictionary<string, string>))
+                    foreach (var item in (param as List<string>))
                     {
-                        TableMap.Add(item.Key, item.Value);
-                        log.Debug($"重置过滤 {item.Key}");
+                        TableMap.Add(item);
+                        log.Debug($"重置过滤 {item}");
                     }
                 }
                 return true;

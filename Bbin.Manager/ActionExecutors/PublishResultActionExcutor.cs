@@ -55,8 +55,8 @@ namespace Bbin.Manager.ActionExecutors
                 if(results.IsRecommend(recommendTemplateModel,result) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
                     recommendBet.Add(recommendTemplateModel.Template.Id, betState);
-                    log.Info($"【提示】RoomId:{result.Game.RoomId} RoomName:{bbinConfig.GetRoomName(result.Game.RoomId)} GameId:{result.Game.GameId} rs:{rs} 推荐下注 {betState}！推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
-                    Console.WriteLine($"【提示】RoomId:{result.Game.RoomId} RoomName:{bbinConfig.GetRoomName(result.Game.RoomId)} GameId:{result.Game.GameId} rs:{rs} 推荐下注 {betState}！推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name}");
+                    log.Info($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name} 推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
+                    Console.WriteLine($"【提示】Room :{result.Game.RoomId} ({bbinConfig.GetRoomName(result.Game.RoomId)}) 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id} Name:{recommendTemplateModel.Template.Name} 推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}" );
                 }
             }
 

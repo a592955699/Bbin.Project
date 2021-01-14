@@ -15,6 +15,7 @@ namespace Bbin.Core.Extensions
         /// </summary>
         /// <param name="resultEntities">结果集合</param>
         /// <param name="recommendTemplate">好路推荐模板设置</param>
+        /// <param name="result">当前结果，用于计算没有采集到结果的时候，匹配 UnKnow</param>
         /// <returns></returns>
         public static bool IsRecommend(this List<ResultEntity> resultEntities, RecommendTemplateModel recommendTemplate,ResultEntity result)
         {
@@ -58,21 +59,10 @@ namespace Bbin.Core.Extensions
                     {
                         tempState = lastColState;
                     }
-                    else
+                    else if (lastColState != tempState)
                     {
-                        //特殊处理第一列第一个就是和的情况，和的结果就跟着后面颜色变，例如 和和庄 -》 庄庄庄
-                        if (lastColState == ResultState.He)
-                        {
-                            for (int z = 0; z < lastCol.Count; z++)
-                            {
-                                lastCol[z] = tempState;//将前面的和，改为 tempState
-                            }
-                        }
-                        else if (lastColState != tempState)
-                        {
-                            colResults.Add(new List<ResultState>());
-                            lastCol = colResults[colResults.Count - 1];
-                        }
+                        colResults.Add(new List<ResultState>());
+                        lastCol = colResults[colResults.Count - 1];
                     }
                 }
                 lastCol.Add(tempState);

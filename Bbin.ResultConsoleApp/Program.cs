@@ -54,15 +54,16 @@ namespace Bbin.ResultConsoleApp
                 services.AddScoped<IGameDbService, GameDbService>();
                 services.AddScoped<IMQService, RabbitMQService>();
                 services.AddScoped<IResultService, ResultService>();
-
-                //services.AddDbContext<BbinDbContext>(options =>
-                //   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
-                //   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
-                //);
-             
+#if DEBUG
+                services.AddDbContext<BbinDbContext>(options =>
+                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext_MsSql")
+                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+                );
+#else
                 services.AddDbContext<BbinDbContext>(options => 
-                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
+                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext_MySql")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
+#endif
 
                 ApplicationContext.Configuration = hostContext.Configuration;
                 ApplicationContext.ServiceProvider = services.BuildServiceProvider();

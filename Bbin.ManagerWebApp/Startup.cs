@@ -33,15 +33,16 @@ namespace Bbin.ManagerWebApp
             services.AddScoped<PublishSnifferUpActionExecutor>();
             services.AddScoped<PublishResultActionExcutor>();
 
-
-            //services.AddDbContext<BbinDbContext>(options =>
-            //       options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
-            //       , b => b.MigrationsAssembly("Bbin.ManagerWebApp"))
-            //    );
-
+#if DEBUG
             services.AddDbContext<BbinDbContext>(options =>
-            options.UseMySQL(Configuration.GetConnectionString("BbinDbContext")
-               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
+               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext_MsSql")
+               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+            );
+#else
+                services.AddDbContext<BbinDbContext>(options => 
+                options.UseMySQL(Configuration.GetConnectionString("BbinDbContext_MySql")
+                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
+#endif
 
             services.AddScoped<IResultDbService, ResultDbService>();
             services.AddScoped<IGameDbService, GameDbService>();

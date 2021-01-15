@@ -24,7 +24,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Date")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime");
@@ -33,11 +33,9 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RoomId")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.HasKey("GameId");
-
-                    b.HasIndex("RoomId", "Index", "Date");
 
                     b.ToTable("Game");
                 });

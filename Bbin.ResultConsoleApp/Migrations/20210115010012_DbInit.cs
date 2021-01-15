@@ -87,11 +87,6 @@ namespace Bbin.ResultConsoleApp.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Game_RoomId_Index_Date",
-                table: "Game",
-                columns: new[] { "RoomId", "Index", "Date" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Result_GameId",
                 table: "Result",
                 column: "GameId");

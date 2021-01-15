@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bbin.ResultConsoleApp.Migrations
 {
     [DbContext(typeof(BbinDbContext))]
-    [Migration("20210114150246_DbInit")]
+    [Migration("20210115010012_DbInit")]
     partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Date")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime");
@@ -35,11 +35,9 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RoomId")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.HasKey("GameId");
-
-                    b.HasIndex("RoomId", "Index", "Date");
 
                     b.ToTable("Game");
                 });

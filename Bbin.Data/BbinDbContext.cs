@@ -28,7 +28,7 @@ namespace Bbin.Data
             {
                 eb.Property(b => b.DateTime).HasColumnType("datetime");
                 eb.ToTable("Game");
-                eb.HasIndex(c => new { c.RoomId, c.Index, c.Date });
+                //eb.HasIndex(c => new { c.RoomId, c.Index, c.Date }).HasName("IX_Game_Index");
             });
 
             modelBuilder.Entity<ResultEntity>(eb=> {

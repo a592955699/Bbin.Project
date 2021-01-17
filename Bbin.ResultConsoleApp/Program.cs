@@ -56,12 +56,12 @@ namespace Bbin.ResultConsoleApp
                 services.AddScoped<IResultService, ResultService>();
 #if DEBUG
                 services.AddDbContext<BbinDbContext>(options =>
-                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext_MsSql")
+                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
                 );
 #else
                 services.AddDbContext<BbinDbContext>(options => 
-                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext_MySql")
+                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
 #endif
 

@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace Bbin.ResultConsoleApp.Migrations
 {
-    public partial class DbInit : Migration
+    public partial class Db_Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                 columns: table => new
                 {
                     GameId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     RoomId = table.Column<string>(nullable: true),
                     Index = table.Column<int>(nullable: false),
                     Date = table.Column<string>(nullable: true),
@@ -28,7 +29,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     RecommendTemplateId = table.Column<int>(nullable: false),
                     ResultState = table.Column<int>(nullable: false),
                     Times = table.Column<int>(nullable: false)
@@ -43,7 +44,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     Describe = table.Column<string>(nullable: true),
                     Publish = table.Column<bool>(nullable: false),

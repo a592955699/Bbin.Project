@@ -3,33 +3,30 @@ using System;
 using Bbin.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Bbin.ResultConsoleApp.Migrations
 {
     [DbContext(typeof(BbinDbContext))]
-    [Migration("20210115022939_DbInit")]
-    partial class DbInit
+    [Migration("20210116132331_Db_Init")]
+    partial class Db_Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Bbin.Core.Entitys.GameEntity", b =>
                 {
                     b.Property<long>("GameId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime");
@@ -38,7 +35,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RoomId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("GameId");
 
@@ -49,8 +46,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("RecommendTemplateId")
                         .HasColumnType("int");
@@ -70,17 +66,16 @@ namespace Bbin.ResultConsoleApp.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Describe")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("Publish")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("RecommendType")
                         .HasColumnType("int");
@@ -96,28 +91,28 @@ namespace Bbin.ResultConsoleApp.Migrations
             modelBuilder.Entity("Bbin.Core.Entitys.ResultEntity", b =>
                 {
                     b.Property<string>("Rs")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(767)");
 
                     b.Property<DateTime>("Begin")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Card1")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Card2")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Card3")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Card4")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Card5")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Card6")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime");
@@ -135,7 +130,7 @@ namespace Bbin.ResultConsoleApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Rn")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Rs");
 

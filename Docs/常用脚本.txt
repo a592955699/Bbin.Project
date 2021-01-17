@@ -1,0 +1,39 @@
+82.156.85.2
+22
+root
+
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 -v `pwd`/data:/var/lib/rabbitmq --hostname RabbitMQ -e RABBITMQ_DEFAULT_VHOST=my_vhost  -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq
+
+docker run --restart=always --name mysql5.7 -p 3306:3306 -v /data/:/var/lib/mysql -v /data/mysql/conf:/etc/mysql/conf.d -v /data/mysql/my.cnf:/etc/mysql/my.cnf -e MYSQL_USER="root" -e MYSQL_PASSWORD="Ahyd#1234" -e MYSQL_ROOT_PASSWORD="Ahyd#1234" -d mysql
+
+docker run -it --name aspnetcoresdk3.1 -p 5001:5001 -v /data/:/data/ 52a3845cafb1 
+
+
+cd /data/bbin/Bbin.ManagerWebApp
+nohup dotnet Bbin.ManagerWebApp.dll > nohup.out &
+
+cd /data/bbin/Bbin.ResultConsoleApp
+nohup dotnet Bbin.ResultConsoleApp.dll > nohup.out &
+
+cd /data/bbin/Bbin.SnifferConsoleApp1
+nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
+
+cd /data/bbin/Bbin.SnifferConsoleApp2
+nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
+
+ps aux|grep dotnet
+
+netstat -ntlp
+
+1.创建数据库 bbin
+create database bbin；
+
+2.给数据库创建单独用户 bbin；
+create user bbin;
+
+3.给用户 bbin 设置密码为 abc###123
+set password for bbin="abc###123";
+
+4.给用户 bbin 赋予数据库 bbin 所有权限，并允许远程连接
+GRANT ALL ON bbin.* TO 'bbin'@'%';
+

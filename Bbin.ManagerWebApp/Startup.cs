@@ -35,12 +35,12 @@ namespace Bbin.ManagerWebApp
 
 #if DEBUG
             services.AddDbContext<BbinDbContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext_MsSql")
+               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
                , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
             );
 #else
-                services.AddDbContext<BbinDbContext>(options => 
-                options.UseMySQL(Configuration.GetConnectionString("BbinDbContext_MySql")
+            services.AddDbContext<BbinDbContext>(options => 
+                options.UseMySQL(Configuration.GetConnectionString("BbinDbContext")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
 #endif
 

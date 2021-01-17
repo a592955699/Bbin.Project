@@ -60,23 +60,30 @@ namespace Bbin.SnifferConsoleApp
                     {
                         while(true)
                         {
-                            using (var scope = host.Services.CreateScope())
+                            try
                             {
-                                var services = scope.ServiceProvider;
+                                using (var scope = host.Services.CreateScope())
+                                {
+                                    var services = scope.ServiceProvider;
 
-                                var mqService = services.GetService<IMQService>();
-                                var snifferService = ApplicationContext.ServiceProvider.GetService<ISnifferService>();
-                                var siteConfig = services.GetService<SiteConfig>();
-                                SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
-                                snifferUpArgs.QueueName = mqService.QueueName;
-                                snifferUpArgs.UserName = siteConfig.UserName;
-                                snifferUpArgs.PassWord = siteConfig.PassWord;
-                                snifferUpArgs.Connected = snifferService.IsConnect();
-                                snifferUpArgs.Work = snifferService.Work;
+                                    var mqService = services.GetService<IMQService>();
+                                    var snifferService = ApplicationContext.ServiceProvider.GetService<ISnifferService>();
+                                    var siteConfig = services.GetService<SiteConfig>();
+                                    SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
+                                    snifferUpArgs.QueueName = mqService.QueueName;
+                                    snifferUpArgs.UserName = siteConfig.UserName;
+                                    snifferUpArgs.PassWord = siteConfig.PassWord;
+                                    snifferUpArgs.Connected = snifferService.IsConnect();
+                                    snifferUpArgs.Work = snifferService.Work;
 
-                                //上线通知 ManagerQueue
-                                mqService.PublishUp(snifferUpArgs);
-                                log.Debug($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
+                                    //上线通知 ManagerQueue
+                                    mqService.PublishUp(snifferUpArgs);
+                                    log.Debug($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("发送上线通知异常", ex);
                             }
                             await Task.Delay(10000);
                         }

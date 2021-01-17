@@ -1,13 +1,16 @@
-82.156.85.2
-22
-root
-
+#docker 创建容器命令
 docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 -v `pwd`/data:/var/lib/rabbitmq --hostname RabbitMQ -e RABBITMQ_DEFAULT_VHOST=my_vhost  -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin rabbitmq
 
 docker run --restart=always --name mysql5.7 -p 3306:3306 -v /data/:/var/lib/mysql -v /data/mysql/conf:/etc/mysql/conf.d -v /data/mysql/my.cnf:/etc/mysql/my.cnf -e MYSQL_USER="root" -e MYSQL_PASSWORD="Ahyd#1234" -e MYSQL_ROOT_PASSWORD="Ahyd#1234" -d mysql
 
 docker run -it --name aspnetcoresdk3.1 -p 5001:5001 -v /data/:/data/ 52a3845cafb1 
 
+
+#docker 进入容器
+docker exec -it 5959ebbd38e9 /bin/bash
+
+
+#后台运行 .net core 程序
 
 cd /data/bbin/Bbin.ManagerWebApp
 nohup dotnet Bbin.ManagerWebApp.dll > nohup.out &
@@ -21,9 +24,14 @@ nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
 cd /data/bbin/Bbin.SnifferConsoleApp2
 nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
 
+# 查看 .net core 程序清单
 ps aux|grep dotnet
 
+# 查看开放端口
 netstat -ntlp
+
+
+#mysql 操作
 
 1.创建数据库 bbin
 create database bbin；

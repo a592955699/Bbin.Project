@@ -9,6 +9,8 @@ namespace Bbin.Data
     {
         GameEntity FindById(long gameId);
         GameEntity FindByDateAndIndex(string date, int index);
+        GameEntity FindNext(long gameId);
+        GameEntity FindPre(long gameId);
         bool Insert(GameEntity game);
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace Bbin.Core.Extensions
 {
     public static class RecommendExtensions
     {
-        public static List<List<ResultState>> ToColumnStates(this List<ResultEntity> resultEntities, int resultIndex)
+        public static List<List<ResultState>> ToColumnResults(this List<ResultEntity> resultEntities, int resultIndex)
         {
             if (resultEntities == null || !resultEntities.Any())
                 return new List<List<ResultState>>();
@@ -82,7 +82,7 @@ namespace Bbin.Core.Extensions
             //升序处理
             var items = recommendTemplate.Items.OrderBy(x => x.Id).ToList();
 
-            var colResults = resultEntities.ToColumnStates(resultIndex);
+            var colResults = resultEntities.ToColumnResults(resultIndex);
             //没结果列，则返回 false
             if (!colResults.Any())
             {

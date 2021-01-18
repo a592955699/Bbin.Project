@@ -14,14 +14,14 @@ using Bbin.Manager.ActionExecutors;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
-    public class HomeController : Controller
+    public class ManagerController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<ManagerController> _logger;
 
         private ManagerApplicationContext _managerApplicationContext;
 
 
-        public HomeController(ILogger<HomeController> logger, ManagerApplicationContext managerApplicationContext)
+        public ManagerController(ILogger<ManagerController> logger, ManagerApplicationContext managerApplicationContext)
         {
             _logger = logger;
             _managerApplicationContext = managerApplicationContext;

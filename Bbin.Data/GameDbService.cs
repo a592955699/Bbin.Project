@@ -40,5 +40,15 @@ namespace Bbin.Data
         {
             return dbContext.Games.FirstOrDefault(x => x.Date == date && x.Index == index);
         }
+
+        public GameEntity FindNext(long gameId)
+        {
+            return dbContext.Games.Where(x=>x.GameId>gameId).OrderBy(x=>x.GameId).FirstOrDefault();
+        }
+
+        public GameEntity FindPre(long gameId)
+        {
+            return dbContext.Games.Where(x => x.GameId < gameId).OrderByDescending(x => x.GameId).FirstOrDefault();
+        }
     }
 }

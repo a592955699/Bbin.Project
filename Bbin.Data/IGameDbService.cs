@@ -1,7 +1,9 @@
 ﻿using Bbin.Core.Entitys;
+using Bbin.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Webdiyer.AspNetCore;
 
 namespace Bbin.Data
 {
@@ -20,5 +22,7 @@ namespace Bbin.Data
         /// <param name="date"></param>
         /// <returns></returns>
         GameEntity FindLastGame(string roomId, string date);
+
+        PagedList<GameEntity> FindList(int pageIndex = 1, int pageSize = 10);
     }
 }

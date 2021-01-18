@@ -11,16 +11,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
-    public class ResultController : Controller
+    public class GameController : Controller
     {
-        private readonly ILogger<ResultController> _logger;
+        private readonly ILogger<GameController> _logger;
 
         private readonly ManagerApplicationContext _managerApplicationContext;
 
         private readonly IGameDbService _gameDbService;
         private readonly IResultDbService _resultDbService;
 
-        public ResultController(ILogger<ResultController> logger, ManagerApplicationContext managerApplicationContext,
+        public GameController(ILogger<GameController> logger, ManagerApplicationContext managerApplicationContext,
             IGameDbService gameDbService,
             IResultDbService resultDbService)
         {
@@ -28,6 +28,13 @@ namespace Bbin.ManagerWebApp.Controllers
             _managerApplicationContext = managerApplicationContext;
             _gameDbService = gameDbService;
             _resultDbService = resultDbService;
+        }
+
+        public IActionResult List(int pageIndex = 1,int pageSize=10)
+        {
+            var list = _gameDbService.FindList(pageIndex,pageSize);
+
+            return new JsonResult(list);
         }
 
         /// <summary>

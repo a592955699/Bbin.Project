@@ -5,6 +5,8 @@ using System.Text;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
+using Bbin.Core.Models;
+using Webdiyer.AspNetCore;
 
 namespace Bbin.Data
 {
@@ -49,6 +51,13 @@ namespace Bbin.Data
         public GameEntity FindPre(long gameId)
         {
             return dbContext.Games.Where(x => x.GameId < gameId).OrderByDescending(x => x.GameId).FirstOrDefault();
+        }
+
+        public PagedList<GameEntity> FindList(int pageIndex = 1, int pageSize = 10)
+        {
+            var query = dbContext.Games.OrderByDescending(x => x.GameId);
+
+            return dbContext.Games.OrderByDescending(x => x.GameId).ToPagedList(pageIndex,pageSize);
         }
     }
 }

@@ -104,12 +104,7 @@ namespace Bbin.ManagerWebApp
                 //默认路由
                 endpoints.MapControllerRoute(
                     name: "default",
-                pattern: "{controller=Manager}/{action=Index}/{id?}");
-
-                //默认 Api 路由
-                endpoints.MapControllerRoute(
-                    name: "defaultApi",
-                pattern: "api/{controller=Result}/{action=Index}/{id?}");
+                pattern: "{controller=Game}/{action=Index}/{id?}");
 
                 //区域路由(要放在默认路由的后面)
                 //注：必须以特性的形式在对应控制器上加上区域名称 [Area("XXXX")]

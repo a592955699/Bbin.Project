@@ -42,11 +42,20 @@ namespace Bbin.Core.Extensions
                 if (lastCol.Any())//最后一列有结果，且最后一个结果 State ！= tempState,新增列
                 {
                     lastColState = lastCol[lastCol.Count - 1];
-                    if (tempState == ResultState.He)
+                    if (tempState == ResultState.He)//当前号码是和，则直接往列里面添加
                     {
-                        tempState = lastColState;
+                   
                     }
-                    else if (lastColState != tempState)
+                    else if (lastColState == ResultState.He)//上个号码是和，则取最后一个不是和 lastColState
+                    {
+                        lastColState = lastCol.LastOrDefault(x => x != ResultState.He);
+                        if(lastColState!=tempState)//lastColState 和 tempState 不一致，则开新列
+                        {
+                            colResults.Add(new List<ResultState>());
+                            lastCol = colResults[colResults.Count - 1];
+                        }
+                    }
+                    else if (lastColState != tempState)//lastColState 和 tempState 不一致，则开新列
                     {
                         colResults.Add(new List<ResultState>());
                         lastCol = colResults[colResults.Count - 1];

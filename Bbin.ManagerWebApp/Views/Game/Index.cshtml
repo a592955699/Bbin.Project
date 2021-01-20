@@ -1,0 +1,59 @@
+﻿@model PagedList<Bbin.Core.Entitys.GameEntity>
+@using Webdiyer.AspNetCore;
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Game List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GameId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Index)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GameId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomId)
+                    @Bbin.Core.Cons.RoomCons.GetRoomName(item.RoomId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Index)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateTime)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.GameId },new { target="_black"})
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="text-right">
+    @Html.Pager(Model).Options(o => o.SetPageIndexParameterName("pageIndex").SetHorizontalAlign("right").SetPagerItemTemplate("&nbsp;{0}"))
+</div>

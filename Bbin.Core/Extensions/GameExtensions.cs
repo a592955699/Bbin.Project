@@ -25,9 +25,24 @@ namespace Bbin.Core.Extensions
             {
                 var maxIndex = results.Max(x => x.Index);
                 gameResult.ColumnResults = results.ToColumnResults(maxIndex);
-                gameResult.NumberResults = results.Select(x => new NumberResultModel() { Index = x.Index, Number = x.Number, ResultState = x.ResultState }).ToList();
+                gameResult.NumberResults = results.ToNumberResult(maxIndex);
             }
             return gameResult;
+        }
+        public static List<NumberResultModel> ToNumberResult(this List<ResultEntity> resultEntities,int maxIndex)
+        {
+            List<NumberResultModel> numberResults = new List<NumberResultModel>();
+            if (resultEntities == null) return numberResults;
+            ResultEntity temp;
+            for (int i = 1; i <= maxIndex; i++)
+            {
+                temp = resultEntities.FirstOrDefault(x => x.Index == i);
+                if (temp == null)
+                    numberResults.Add(new NumberResultModel() { Index = i, ResultState = Enums.ResultState.UnKnown });
+                else
+                    numberResults.Add(new NumberResultModel() { Index = temp.Index, Number = temp.Number, ResultState = temp.ResultState });
+            }
+            return numberResults;
         }
     }
 }

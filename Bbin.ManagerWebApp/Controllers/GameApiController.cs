@@ -54,13 +54,13 @@ namespace Bbin.ManagerWebApp.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Game Id</param>
+        /// <param name="gameId">Game Id</param>
         /// <returns></returns>
-        public IActionResult NextResult(int id)
+        public IActionResult NextResult(int gameId,string roomId)
         {
-            var game = _gameDbService.FindNext(id);
-            if (game == null) return new JsonResult(null); ;
-            var results = _resultDbService.FindList(id);
+            var game = _gameDbService.FindNext(gameId,roomId);
+            if (game == null) return new JsonResult(null); 
+            var results = _resultDbService.FindList(gameId);
             var resultModel = game.ToGameResultModel(results);
             return new JsonResult(resultModel);
         }
@@ -70,11 +70,11 @@ namespace Bbin.ManagerWebApp.Controllers
         /// </summary>
         /// <param name="id">Game Id</param>
         /// <returns></returns>
-        public IActionResult PreResult(int id)
+        public IActionResult PreResult(int gameId, string roomId)
         {
-            var game = _gameDbService.FindPre(id);
+            var game = _gameDbService.FindPre(gameId,roomId);
             if (game == null) return new JsonResult(null);
-            var results = _resultDbService.FindList(id);
+            var results = _resultDbService.FindList(gameId);
             var resultModel = game.ToGameResultModel(results);
             return new JsonResult(resultModel);
         }

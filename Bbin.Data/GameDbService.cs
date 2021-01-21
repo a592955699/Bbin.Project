@@ -43,14 +43,14 @@ namespace Bbin.Data
             return dbContext.Games.FirstOrDefault(x => x.Date == date && x.Index == index);
         }
 
-        public GameEntity FindNext(long gameId)
+        public GameEntity FindNext(long gameId,string roomId)
         {
-            return dbContext.Games.Where(x=>x.GameId>gameId).OrderBy(x=>x.GameId).FirstOrDefault();
+            return dbContext.Games.Where(x=>x.GameId>gameId && x.RoomId == roomId).OrderBy(x=>x.GameId).FirstOrDefault();
         }
 
-        public GameEntity FindPre(long gameId)
+        public GameEntity FindPre(long gameId, string roomId)
         {
-            return dbContext.Games.Where(x => x.GameId < gameId).OrderByDescending(x => x.GameId).FirstOrDefault();
+            return dbContext.Games.Where(x => x.GameId < gameId && x.RoomId == roomId).OrderByDescending(x => x.GameId).FirstOrDefault();
         }
 
         public PagedList<GameEntity> FindList(int pageIndex = 1, int pageSize = 10)

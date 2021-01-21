@@ -11,6 +11,7 @@ namespace Bbin.Core.Models.UI
         public int Index { get; set; }
         public string RoomId { get; set; }
         public string RoomName { get; set; }
+        public DateTime Date{get;set;}
         /// <summary>
         /// 数字结果
         /// </summary>

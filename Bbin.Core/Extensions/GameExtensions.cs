@@ -15,10 +15,11 @@ namespace Bbin.Core.Extensions
             if (game == null) return null;
             GameResultModel gameResult = new GameResultModel()
             {
-                GameId=game.GameId,
-                Index=game.Index,
-                RoomId=game.RoomId,
-                RoomName = RoomCons.GetRoomName(game.RoomId)
+                GameId = game.GameId,
+                Index = game.Index,
+                RoomId = game.RoomId,
+                RoomName = RoomCons.GetRoomName(game.RoomId),
+                Date = game.DateTime
             };
 
             if(results!=null && results.Any())

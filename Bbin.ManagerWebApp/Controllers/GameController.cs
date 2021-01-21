@@ -47,6 +47,28 @@ namespace Bbin.ManagerWebApp.Controllers
             var resultModel = game.ToGameResultModel(results);
             return View(resultModel);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameId">Game Id</param>
+        /// <returns></returns>
+        public IActionResult NextResult(int gameId, string roomId)
+        {
+            var game = _gameDbService.FindNext(gameId, roomId);
+            if (game == null) return new JsonResult("找不到对应的Game");
+            return RedirectToAction("Details", new { id = game.GameId });
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameId">Game Id</param>
+        /// <returns></returns>
+        public IActionResult PreResult(int gameId, string roomId)
+        {
+            var game = _gameDbService.FindPre(gameId, roomId);
+            if (game == null) return new JsonResult("找不到对应的Game");
+            return RedirectToAction("Details", new { id= game.GameId });
+        }
     }
 }

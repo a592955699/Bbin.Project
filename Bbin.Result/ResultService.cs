@@ -83,7 +83,9 @@ namespace Bbin.Result
                     //#TODO 事物处理
                     if (isNes)
                     {
-                        if (gameDbService.FindByDateAndIndex(game.RoomId, game.Date, game.Index) == null)
+                        var dbGame = gameDbService.FindByDateAndIndex(game.RoomId, game.Date, game.Index);
+                        //判断时间是为了处理同一天存在两个相同 Game Index 问题
+                        if (dbGame == null || (DateTime.Now - dbGame.DateTime).TotalHours > 2)
                         {
                             gameDbService.Insert(game);
                             log.Info($"【提示】靴不存在！新增靴! {JsonConvert.SerializeObject(result)}");
@@ -93,19 +95,9 @@ namespace Bbin.Result
                             log.Info($"【提示】靴已存在！不新增靴!{JsonConvert.SerializeObject(result)}");
                         }
                     }
-                    //if (resultDbService.findByRs(result.Rs) != null)
-                    //{
-                    //    log.InfoFormat($"【提示】结果已存在！跳过后续操作!Rs: {result.Rs}");
-                    //    return;
-                    //}
-                    //else
-                    //{
-                    //    resultDbService.Insert(result);
-                    //}
 
                     resultDbService.Insert(result);
 
-                    //log.DebugFormat("【提示】结果处理完毕！Json: {0}", JsonConvert.SerializeObject(round));
 
                     //处理完毕，推送通知
                     //注意：按照备份模式推送。 推送多个副本。
@@ -124,13 +116,39 @@ namespace Bbin.Result
 
         void GetGame(RoundModel round, ResultEntity result, out GameEntity game, out bool isNew)
         {
-            game = null;
-            isNew = false;
+            /** 处理逻辑：
+             *  取 RoomId GameIndex ResultIndex 对应的上一个结果（今天的取不到，则去昨天的）
+             *  判断上一个结果和这个结果没有超过10分钟，说明是同一靴
+             *  否则都是新一靴
+             */
 
-            //从新开始的一靴
+            game = null;
+            isNew = true;
+
             if (result.Index == 1)
             {
                 isNew = true;
+            }
+            else
+            {
+                //上一个的结果
+                var preResult = resultDbService.FindResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
+                if (preResult == null)
+                {
+                    //推测跨天，获取前一天的上一个结果
+                    preResult = resultDbService.FindResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
+                }
+                if(preResult!=null && (result.Begin - preResult.Begin).TotalMinutes<=10)
+                {
+                    isNew = false;
+                    game = preResult.Game;
+
+                    log.InfoFormat("【提示】采集到 Round 结果(同一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
+                    result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
+                }
+            }
+            if(isNew)
+            {
                 game = new GameEntity()
                 {
                     RoomId = result.Game.RoomId,
@@ -140,109 +158,8 @@ namespace Bbin.Result
                 };
 
                 log.InfoFormat("【提示】采集到 Round 结果(新的一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index,round.Pk);
+                result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
                 return;
-            }
-            else
-            {
-                var preResult = resultDbService.FindResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
-                //连续的近两局（且间隔不超过2小时）,表示是同一靴
-                //获取上一局的结果中的 Game
-                if (preResult != null)
-                {
-                    if((DateTime.Now - preResult.Game.DateTime).TotalHours>2)
-                    {
-                        isNew = true;
-                        game = new GameEntity()
-                        {
-                            RoomId = result.Game.RoomId,
-                            DateTime = result.Begin,
-                            Date = result.Game.Date,
-                            Index = result.Game.Index
-                        };
-
-                        log.InfoFormat("【提示】采集到 Round 结果(新的一靴,上一靴超过2小时) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                        return;
-                    }
-
-                    game = preResult.Game;
-                    log.InfoFormat("【提示】采集到 Round 结果(连续) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                    return;
-                }
-
-                //连续的两局，但是是跨天了
-                //获取上一局的结果中的 Game
-                if (preResult == null)
-                {
-                    preResult = resultDbService.FindResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
-                    if (preResult != null && (round.Begin - preResult.Begin).TotalMinutes < 5)//相差5分钟内的，算同一局
-                    {
-                        game = preResult.Game;
-                        log.InfoFormat("【提示】采集到 Round 结果(跨天连续) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                        return;
-                    }
-                }
-
-                //这一桌 date 的最后一靴
-                var lastGame = gameDbService.FindLastGame(result.Game.RoomId, result.Game.Date);
-                if (lastGame != null)
-                {
-                    //当前靴是 date 的最后一靴
-                    //获取最后一靴的 Game
-                    if (lastGame.Index == result.Game.Index)
-                    {
-                        game = lastGame;
-
-                        log.InfoFormat("【提示】采集到 Round 结果(当前靴是 date 的最后一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                        return;
-                    }
-                    else
-                    {
-                        isNew = true;
-                        game = new GameEntity()
-                        {
-                            RoomId = result.Game.RoomId,
-                            DateTime = result.Begin,
-                            Date = result.Game.Date,
-                            Index = result.Game.Index
-                        };
-
-                        log.InfoFormat("【提示】采集到 Round 结果(中途开始采集) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                        return;
-                    }
-                }
-
-
-                //这一桌 yesterdayDate 的最后一靴
-                var yesterdayLastGame = gameDbService.FindLastGame(result.Game.RoomId, result.Game.Date);
-                if (yesterdayLastGame != null)
-                {
-                    //当前靴是 yesterdayDate 的最后一靴
-                    //获取最后一靴的 Game
-                    if (yesterdayLastGame.Index == result.Game.Index)
-                    {
-                        game = yesterdayLastGame;
-                        log.InfoFormat("【提示】采集到 Round 结果(当前靴是 date 的最后一靴【跨天】) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
-                        return;
-                    }
-                }
-
-                game = new GameEntity()
-                {
-                    RoomId = round.RoomId,
-                    DateTime = result.Begin,
-                    Date = result.Game.Date,
-                    Index = result.Game.Index
-                };
-                isNew = true;
-                log.InfoFormat("【提示】采集到 Round 结果(中途开始采集) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
-                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
             }
         }
     }

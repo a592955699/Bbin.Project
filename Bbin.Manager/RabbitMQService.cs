@@ -71,7 +71,7 @@ namespace Bbin.Manager
                     if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
                     {
                         log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
-                        actionExecutor.DoExcute(message);
+                        actionExecutor.DoExecute(message);
                     }
                     else
                     {

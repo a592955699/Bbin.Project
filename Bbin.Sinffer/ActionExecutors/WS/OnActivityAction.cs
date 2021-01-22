@@ -1,18 +1,19 @@
 ﻿
 using Bbin.Core.Cons;
 using Bbin.Sniffer;
+using Bbin.Sniffer.SnifferActionExecutors;
 using log4net;
 using System.Collections.Generic;
 
-namespace Bbin.SnifferInternalActionExecutors
+namespace Bbin.SnifferActionExecutors
 {
-    public class OnActivityAction : IInternalActionExecutor
+    public class OnActivityAction : AbstractWsActionExecutor
     {
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnActivityAction));
-        public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
+        public override object DoExecute( params object[] paras)
         {
             object runError = string.Empty;
-            if (data.TryGetValue("runEor", out runError))
+            if (Data.TryGetValue("runEor", out runError))
             {
                 if (runError.ToString() == "IDLE_10M")
                 {
@@ -24,11 +25,7 @@ namespace Bbin.SnifferInternalActionExecutors
                     log.Warn("【警告】OnActivityAction runEor:" + runError);
                 }
             }
-        }
-
-        public bool SetParams<T>(string name, T param, params object[] paras)
-        {
-            return false;
+            return null;
         }
     }
 }

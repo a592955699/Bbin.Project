@@ -10,7 +10,7 @@ namespace Bbin.Sniffer.ActionExecutors
     public class SnifferStopActionExecutor : IActionExecutor
     {
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferStartActionExecutor));
-        public object DoExcute(object args)
+        public object DoExecute(params object[] args)
         {
             var snifferService = (ISnifferService)ApplicationContext.ServiceProvider.GetService(typeof(ISnifferService));
 

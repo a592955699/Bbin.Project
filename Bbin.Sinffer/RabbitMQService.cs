@@ -78,7 +78,7 @@ namespace Bbin.Sniffer
                 if(ActionExecutors.TryGetValue(queueModel.Key,out actionExecutor))
                 {
                     log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
-                    actionExecutor.DoExcute(queueModel.Data);
+                    actionExecutor.DoExecute(queueModel.Data);
                 }
                 else
                 {

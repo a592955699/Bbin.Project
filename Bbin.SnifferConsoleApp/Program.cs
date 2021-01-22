@@ -21,8 +21,8 @@ namespace Bbin.SnifferConsoleApp
         public static void Main(string[] args)
         {
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Sniffer 端)!本程序只是做学习交流使用，请勿用于商业用途！");
-            ApplicationContext.ConfigureLog4Net(false);
-            ApplicationContext.ConfigureAppsettingsJson();
+            ApplicationContext.ConfigureLog4Net(true);
+            //ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);
@@ -40,21 +40,6 @@ namespace Bbin.SnifferConsoleApp
                     var mqService = services.GetService<IMQService>();
                     //侦听 ManagerExchange 
                     mqService.ListenerManager();
-
-                    ////需要执行的任务
-                    ////var mqService = ApplicationContext.ServiceProvider.GetService<IMQService>();
-                    //var socketService = ApplicationContext.ServiceProvider.GetService<ISocketService>();
-                    //var siteConfig = ApplicationContext.ServiceProvider.GetService<SiteConfig>();
-                    //SnifferUpArgs snifferUpArgs = new SnifferUpArgs();
-                    //snifferUpArgs.QueueName = mqService.QueueName;
-                    //snifferUpArgs.UserName = siteConfig.UserName;
-                    //snifferUpArgs.Password = siteConfig.PassWord;
-                    //snifferUpArgs.Connected = socketService.IsConnect;
-
-                    ////上线通知 ManagerQueue
-                    //mqService.PublishUp(snifferUpArgs);
-                    //log.Info($"【提示】已发送上线通知，args:{JsonConvert.SerializeObject(snifferUpArgs)}");
-
 
                     Task.Run(async () =>
                     {
@@ -116,9 +101,8 @@ namespace Bbin.SnifferConsoleApp
                 services.AddSingleton<IMQService, RabbitMQService>();
                 services.AddSingleton<ISocketService, SocketService>();
                 services.AddSingleton<ISnifferService, SnifferService>();
-
-                ApplicationContext.Configuration = hostContext.Configuration;
                 ApplicationContext.ServiceProvider = services.BuildServiceProvider();
+                ApplicationContext.Configuration = hostContext.Configuration;
             });
         }
             

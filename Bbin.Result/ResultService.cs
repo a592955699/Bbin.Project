@@ -17,21 +17,6 @@ namespace Bbin.Result
         private readonly IGameDbService gameDbService;
         private readonly IMQService mqService;
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(ResultService));
-        //private Dictionary<string, GameEntity> gameDic = new Dictionary<string, GameEntity>();
-        
-        //private GameEntity GetGameCache(string roomId)
-        //{
-        //    return gameDic.GetValueOrDefault(roomId);
-        //}
-
-        //private void PutGameCache(GameEntity gameEntity)
-        //{
-        //    gameDic[gameEntity.RoomId] = gameEntity;
-        //}
-        //private void RemoveGameCache(string roomId)
-        //{
-        //    gameDic.Remove(roomId);
-        //}
 
         public ResultService(
             IResultDbService _resultDbService,

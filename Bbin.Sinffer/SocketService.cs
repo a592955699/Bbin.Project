@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using WebSocketSharp;
 using Bbin.Core.Configs;
 using Bbin.Core.Model;
-using Bbin.SnifferInternalActionExecutors;
+using Bbin.SnifferActionExecutors;
 using System.Threading.Tasks;
+using Bbin.Sniffer.SnifferActionExecutors;
 
 namespace Bbin.Sniffer
 {
@@ -130,7 +131,7 @@ namespace Bbin.Sniffer
         public BbinConfig Config { get; set; }
         public string SessionId { get; set; }
         public WebSocket WebSocket { get; private set; }
-        public Dictionary<string, IInternalActionExecutor> ActionExecutors { get; private set; }
+        public Dictionary<string, AbstractWsActionExecutor> ActionExecutors { get; private set; }
         public int ReConnectionTimes { get; set; }
         public bool IsConnect { get; private set; }
         #endregion
@@ -186,17 +187,17 @@ namespace Bbin.Sniffer
             }
         }
 
-        public object SetParams<T>(string action, string name, T value)
+        public void SetParams<T>(string action, string name, T value)
         {
-            IInternalActionExecutor actionExecutor = null;
+            AbstractWsActionExecutor actionExecutor = null;
             if (ActionExecutors.TryGetValue(action, out actionExecutor))
             {
                 actionExecutor.SetParams<T>(name, value);
-                return true;
+                return;
             }
             else
             {
-                return false;
+                return;
             }
         }
         public string GetActionName(Dictionary<string, object> keyValues)
@@ -327,10 +328,11 @@ namespace Bbin.Sniffer
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(e.Data);
                 var actionName = GetActionName(dict);
 
-                IInternalActionExecutor actionExecutor;
+                AbstractWsActionExecutor actionExecutor;
                 if (ActionExecutors.TryGetValue(actionName, out actionExecutor))
                 {
-                    actionExecutor.ExecuteAsync(dict, this);
+                    actionExecutor.SetData(dict, this);
+                    actionExecutor.DoExecute(null);
                 }
                 else
                 {
@@ -364,7 +366,7 @@ namespace Bbin.Sniffer
         /// </summary>
         private void InitActionExecutors()
         {
-            ActionExecutors = new Dictionary<string, IInternalActionExecutor>();
+            ActionExecutors = new Dictionary<string, AbstractWsActionExecutor>();
             ActionExecutors.Add(ActionNames.Ping, new PingAction());
             ActionExecutors.Add(ActionNames.Ready, new ReadyAction());
             ActionExecutors.Add(ActionNames.NetStatusEvent, new NetStatusEventAction());

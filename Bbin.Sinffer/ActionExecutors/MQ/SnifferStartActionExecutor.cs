@@ -11,9 +11,9 @@ namespace Bbin.Sniffer.ActionExecutors
     public class SnifferStartActionExecutor : IActionExecutor
     {
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(SnifferStartActionExecutor));
-        public object DoExcute(object args)
+        public object DoExecute(params object[] args)
         {
-            var snifferUpArgs = ((JObject)args).ToObject<SnifferUpArgs>();            
+            var snifferUpArgs = ((JObject)args[0]).ToObject<SnifferUpArgs>();            
             var siteConfig = ApplicationContext.ServiceProvider.GetService<SiteConfig>();
             siteConfig.UserName = snifferUpArgs.UserName;
             siteConfig.PassWord = snifferUpArgs.PassWord;

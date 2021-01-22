@@ -15,9 +15,9 @@ namespace Bbin.Manager.ActionExecutors
     public class PublishSnifferUpActionExecutor : IActionExecutor
     {
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(PublishSnifferUpActionExecutor));
-        public object DoExcute(object args)
+        public object DoExecute(params object[] args)
         {
-            string jsonString = args.ToString();
+            string jsonString = args[0].ToString();
             var queueModel = JsonConvert.DeserializeObject<QueueModel<SnifferUpArgs>>(jsonString);
             
             var managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();

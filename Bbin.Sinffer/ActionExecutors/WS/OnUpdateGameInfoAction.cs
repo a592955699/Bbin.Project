@@ -11,10 +11,11 @@ using Bbin.Core;
 using Microsoft.Extensions.Configuration;
 using Bbin.Core.Model;
 using Bbin.Core.Configs;
+using Bbin.Sniffer.SnifferActionExecutors;
 
-namespace Bbin.SnifferInternalActionExecutors
+namespace Bbin.SnifferActionExecutors
 {
-    public class OnUpdateGameInfoAction : IInternalActionExecutor
+    public class OnUpdateGameInfoAction : AbstractWsActionExecutor
     {
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnUpdateGameInfoAction));
         /// <summary>
@@ -25,21 +26,15 @@ namespace Bbin.SnifferInternalActionExecutors
 
         public OnUpdateGameInfoAction()
         {
-            //TableMap.Add("3001-1", "百家乐A");
-            //TableMap.Add("3001-2", "百家乐B");
-            //TableMap.Add("3001-3", "百家乐C");
-            //TableMap.Add("3001-52", "主题百家乐TB1");
-            //TableMap.Add("3001-37", "极速百家乐J");
-            //TableMap.Add("3001-42", "竞咪M5");
             var bbinConfig = ApplicationContext.Configuration.GetSection("BbinConfig").Get<BbinConfig>();
             if (bbinConfig != null && bbinConfig.Rooms != null)
             {
                 TableMap = bbinConfig.Rooms;
             }
         }
-        public void ExecuteAsync(Dictionary<string, object> data, ISocketService webSocketWrap, params object[] paras)
+        public override object DoExecute(params object[] paras)
         {
-            var sl = (JObject)data["sl"];
+            var sl = (JObject)Data["sl"];
             var slDict = sl.ToObject<Dictionary<string, Dictionary<string, object>>>();
 
             List<RoundModel> rooms = new List<RoundModel>();
@@ -101,27 +96,28 @@ namespace Bbin.SnifferInternalActionExecutors
             {
                 if (!String.IsNullOrWhiteSpace(item.St))
                 {
-                    webSocketWrap.InternalOnStateChange(item);
+                    SocketService.InternalOnStateChange(item);
                 }
 
                 if (item.St == "waiting")
                 {
-                    webSocketWrap.InternalOnFullResult(item);
+                    SocketService.InternalOnFullResult(item);
                     continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(item.Cd))
                 {
-                    webSocketWrap.InternalOnCd(item);
+                    SocketService.InternalOnCd(item);
                     continue;
                 }
                 if (!string.IsNullOrWhiteSpace(item.Pk))
                 {
-                    webSocketWrap.InternalOnDealingResult(item);
+                    SocketService.InternalOnDealingResult(item);
                     continue;
                 }
                 log.Debug(DateTime.Now.ToString("HH:mm:ss") + " " + JsonConvert.SerializeObject(item));
             }
+            return null;
         }
 
         void SetRound(RoundModel round)
@@ -140,26 +136,17 @@ namespace Bbin.SnifferInternalActionExecutors
                 return null;
             }
         }
-        public bool SetParams<T>(string name, T param, params object[] paras)
+        public override void SetParams<T>(string name, T param)
         {
-            try
+            if (name == "TableMap")
             {
-                if (name == "TableMap")
+                TableMap.Clear();
+                RnRsMap.Clear();
+                foreach (var item in (param as List<string>))
                 {
-                    TableMap.Clear();
-                    RnRsMap.Clear();
-                    foreach (var item in (param as List<string>))
-                    {
-                        TableMap.Add(item);
-                        log.Debug($"重置过滤 {item}");
-                    }
+                    TableMap.Add(item);
+                    log.Debug($"重置过滤 {item}");
                 }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                log.Debug(ex.ToString());
-                return false;
             }
         }
     }

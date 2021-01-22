@@ -1,4 +1,5 @@
-﻿using Bbin.Core.Enums;
+﻿using Bbin.Core.Entitys;
+using Bbin.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,5 +1,6 @@
 ﻿using Bbin.Core.Cons;
 using Bbin.Core.Entitys;
+using Bbin.Core.Enums;
 using Bbin.Core.Models.UI;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,19 @@ namespace Bbin.Core.Extensions
                     numberResults.Add(new NumberResultModel() { Index = temp.Index, Number = temp.Number, ResultState = temp.ResultState });
             }
             return numberResults;
+        }
+        public static PushGameResultModel ToPushGameResultModel(this GameResultModel gameResultModel, Dictionary<RecommendTemplateEntity, ResultState> recommend)
+        {
+            return new PushGameResultModel() { 
+                GameId = gameResultModel.GameId,                
+                Date = gameResultModel.Date,
+                Index= gameResultModel.Index,              
+                RoomId= gameResultModel.RoomId,
+                RoomName= gameResultModel.RoomName,
+                ColumnResults = gameResultModel.ColumnResults,
+                NumberResults = gameResultModel.NumberResults,
+                Recommend = recommend
+            };
         }
     }
 }

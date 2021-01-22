@@ -3,6 +3,7 @@ using Bbin.Core.Configs;
 using Bbin.Data;
 using Bbin.Manager;
 using Bbin.Manager.ActionExecutors;
+using Bbin.ManagerWebApp.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@ namespace Bbin.ManagerWebApp
             });
 
             services.AddControllersWithViews();
+
+            services.AddSignalR();
 
             services.AddSingleton(Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
             services.AddSingleton<IMQService, RabbitMQService>();
@@ -111,6 +114,8 @@ namespace Bbin.ManagerWebApp
                 endpoints.MapControllerRoute(
                    name: "default2",
                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHub<GameHub>("/gameHub");
             });
 
             ApplicationContext.ServiceProvider = app.ApplicationServices;

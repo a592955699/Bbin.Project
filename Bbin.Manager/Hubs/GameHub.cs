@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Bbin.Core.Extensions;
+using Bbin.Core.Models.UI;
 using Microsoft.AspNetCore.SignalR;
 
 
@@ -9,6 +10,16 @@ namespace Bbin.ManagerWebApp.Hubs
 {
     public class GameHub : Hub<IGameHub>
     {
+        ///// <summary>
+        ///// 推送结果
+        ///// </summary>
+        ///// <param name="groupName"></param>
+        ///// <returns></returns>
+        //public async Task PushResult(PushGameResultModel gameResult)
+        //{
+        //    string groupName = GroupExtension.GetGroupName(gameResult.RoomId);
+        //    await Clients.Group(groupName).PushResult(gameResult);
+        //}
         /// <summary>
         /// 加入组
         /// </summary>
@@ -20,7 +31,6 @@ namespace Bbin.ManagerWebApp.Hubs
 
             await Clients.Caller.JoinGroupAsync(groupName);
         }
-
         /// <summary>
         /// 加入组
         /// </summary>
@@ -35,7 +45,6 @@ namespace Bbin.ManagerWebApp.Hubs
 
             await Clients.Caller.JoinGroupAsync(String.Join(",", groupNames));
         }
-
         /// <summary>
         /// 退出组
         /// </summary>
@@ -47,7 +56,6 @@ namespace Bbin.ManagerWebApp.Hubs
 
             await Clients.Caller.LeaveGroupAsync(groupName);
         }
-
         /// <summary>
         /// 退出组
         /// </summary>
@@ -61,7 +69,6 @@ namespace Bbin.ManagerWebApp.Hubs
             }
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, string.Join(",", groupNames));
         }
-
         /// <summary>
         /// 推送消息给所有人
         /// </summary>

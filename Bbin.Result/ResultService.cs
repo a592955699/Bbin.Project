@@ -6,6 +6,7 @@ using Bbin.Core.Extensions;
 using log4net;
 using Newtonsoft.Json;
 using Bbin.Core.Model;
+using System.Collections.Generic;
 
 namespace Bbin.Result
 {
@@ -16,6 +17,21 @@ namespace Bbin.Result
         private readonly IGameDbService gameDbService;
         private readonly IMQService mqService;
         ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(ResultService));
+        //private Dictionary<string, GameEntity> gameDic = new Dictionary<string, GameEntity>();
+        
+        //private GameEntity GetGameCache(string roomId)
+        //{
+        //    return gameDic.GetValueOrDefault(roomId);
+        //}
+
+        //private void PutGameCache(GameEntity gameEntity)
+        //{
+        //    gameDic[gameEntity.RoomId] = gameEntity;
+        //}
+        //private void RemoveGameCache(string roomId)
+        //{
+        //    gameDic.Remove(roomId);
+        //}
 
         public ResultService(
             IResultDbService _resultDbService,
@@ -67,7 +83,7 @@ namespace Bbin.Result
                     //#TODO 事物处理
                     if (isNes)
                     {
-                        if(gameDbService.FindByDateAndIndex(game.Date,game.Index)==null)
+                        if (gameDbService.FindByDateAndIndex(game.RoomId, game.Date, game.Index) == null)
                         {
                             gameDbService.Insert(game);
                             log.Info($"【提示】靴不存在！新增靴! {JsonConvert.SerializeObject(result)}");
@@ -130,10 +146,26 @@ namespace Bbin.Result
             else
             {
                 var preResult = resultDbService.FindResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
-                //连续的近两局,表示是同一靴
+                //连续的近两局（且间隔不超过2小时）,表示是同一靴
                 //获取上一局的结果中的 Game
                 if (preResult != null)
                 {
+                    if((DateTime.Now - preResult.Game.DateTime).TotalHours>2)
+                    {
+                        isNew = true;
+                        game = new GameEntity()
+                        {
+                            RoomId = result.Game.RoomId,
+                            DateTime = result.Begin,
+                            Date = result.Game.Date,
+                            Index = result.Game.Index
+                        };
+
+                        log.InfoFormat("【提示】采集到 Round 结果(新的一靴,上一靴超过2小时) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
+                        result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
+                        return;
+                    }
+
                     game = preResult.Game;
                     log.InfoFormat("【提示】采集到 Round 结果(连续) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
                         result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
@@ -145,7 +177,7 @@ namespace Bbin.Result
                 if (preResult == null)
                 {
                     preResult = resultDbService.FindResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
-                    if (preResult != null && (round.Begin - preResult.Begin).TotalSeconds < 300)//相差5分钟内的，算同一局
+                    if (preResult != null && (round.Begin - preResult.Begin).TotalMinutes < 5)//相差5分钟内的，算同一局
                     {
                         game = preResult.Game;
                         log.InfoFormat("【提示】采集到 Round 结果(跨天连续) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",

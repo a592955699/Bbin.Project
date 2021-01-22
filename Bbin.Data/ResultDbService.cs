@@ -31,7 +31,7 @@ namespace Bbin.Data
 
         public ResultEntity FindResult(string roomId, string date, int gameIndex, int index)
         {
-            return dbContext.Results.FirstOrDefault(x => x.Game.Index == gameIndex && x.Game.RoomId == roomId && x.Game.Date == date && x.Index == index);
+            return dbContext.Results.OrderByDescending(x=>x.Begin).FirstOrDefault(x => x.Game.Index == gameIndex && x.Game.RoomId == roomId && x.Game.Date == date && x.Index == index);
         }
 
 

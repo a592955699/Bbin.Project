@@ -38,9 +38,9 @@ namespace Bbin.Data
             return dbContext.Games.Where(x => x.RoomId == roomId && x.Date == date).OrderByDescending(x => x.DateTime).FirstOrDefault();
         }
 
-        public GameEntity FindByDateAndIndex(string date, int index)
+        public GameEntity FindByDateAndIndex(string roomId, string date, int index)
         {
-            return dbContext.Games.FirstOrDefault(x => x.Date == date && x.Index == index);
+            return dbContext.Games.OrderByDescending(x=>x.DateTime).FirstOrDefault(x => x.Date == date && x.Index == index);
         }
 
         public GameEntity FindNext(long gameId,string roomId)

@@ -10,7 +10,7 @@ namespace Bbin.Data
     public interface IGameDbService
     {
         GameEntity FindById(long gameId);
-        GameEntity FindByDateAndIndex(string date, int index);
+        GameEntity FindByDateAndIndex(string roomId, string date, int index);
         GameEntity FindNext(long gameId, string roomId);
         GameEntity FindPre(long gameId, string roomId);
         bool Insert(GameEntity game);

@@ -35,7 +35,7 @@ namespace Bbin.Result
                 {
                     if (queueModel == null || queueModel.Data == null)
                     {
-                        log.Warn("【警告】Round 转 Result 失败,数据不完整！");
+                        log.Warn($"【警告】Round 转 Result 失败,数据不完整！");
                         return;
                     }
                     var round = queueModel.Data;
@@ -116,23 +116,22 @@ namespace Bbin.Result
             }
             else
             {
-                //上一个的结果
-                var preResult = resultDbService.FindResult(result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index - 1);
-                if (preResult == null)
+                var preResult = resultDbService.FindLastResult(result.Game.RoomId, result.Game.Date, result.Game.Index);
+                if(preResult==null)
                 {
                     //推测跨天，获取前一天的上一个结果
-                    preResult = resultDbService.FindResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index, result.Index - 1);
+                    preResult = resultDbService.FindLastResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index);
                 }
-                if(preResult!=null && (result.Begin - preResult.Begin).TotalMinutes<=10)
+                if (preResult != null && (result.Begin - preResult.Begin).TotalMinutes <= 10)
                 {
                     isNew = false;
                     game = preResult.Game;
 
-                    log.InfoFormat("【提示】采集到 Round 结果(同一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
+                    log.InfoFormat("【提示】采集到 Round 结果(同一靴) RoomId:{0} Game Index:{2} Round Index:{3} Game Date:{1} Pk:{4}",
                     result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
                 }
             }
-            if(isNew)
+            if (isNew)
             {
                 game = new GameEntity()
                 {
@@ -142,7 +141,7 @@ namespace Bbin.Result
                     Index = result.Game.Index
                 };
 
-                log.InfoFormat("【提示】采集到 Round 结果(新的一靴) RoomId:{0} Game Date:{1} Game Index:{2} Round Index:{3} Pk:{4}",
+                log.InfoFormat("【提示】采集到 Round 结果(新的一靴) RoomId:{0} Game Index:{2} Round Index:{3} Game Date:{1} Pk:{4}",
                 result.Game.RoomId, result.Game.Date, result.Game.Index, result.Index, round.Pk);
                 return;
             }

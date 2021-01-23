@@ -11,6 +11,6 @@ namespace Bbin.Data
         bool Insert(ResultEntity result);
         List<ResultEntity> FindList(long gameId);
         ResultEntity FindResult(string roomId, string date, int gameIndex, int index);
-
+        ResultEntity FindLastResult(string roomId, string date, int gameIndex);
     }
 }

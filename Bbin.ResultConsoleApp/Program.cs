@@ -18,7 +18,7 @@ namespace Bbin.ResultConsoleApp
         public static void Main(string[] args)
         {
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Result 端)!本程序只是做学习交流使用，请勿用于商业用途！");
-            ApplicationContext.ConfigureLog4Net(true);
+            ApplicationContext.ConfigureLog4Net(false);
             //ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 
@@ -54,16 +54,16 @@ namespace Bbin.ResultConsoleApp
                 services.AddScoped<IGameDbService, GameDbService>();
                 services.AddScoped<IMQService, RabbitMQService>();
                 services.AddScoped<IResultService, ResultService>();
-#if DEBUG
-                services.AddDbContext<BbinDbContext>(options =>
-                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
-                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
-                );
-#else
+//#if DEBUG
+//                services.AddDbContext<BbinDbContext>(options =>
+//                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
+//                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+//                );
+//#else
                 services.AddDbContext<BbinDbContext>(options => 
                 options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
-#endif
+//#endif
                 ApplicationContext.ServiceProvider = services.BuildServiceProvider();
                 ApplicationContext.Configuration = hostContext.Configuration;
             });

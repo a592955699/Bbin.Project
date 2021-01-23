@@ -45,16 +45,16 @@ namespace Bbin.ManagerWebApp
             services.AddScoped<PublishSnifferUpActionExecutor>();
             services.AddScoped<PublishResultActionExcutor>();
 
-#if DEBUG
-            services.AddDbContext<BbinDbContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
-               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
-            );
-#else
+//#if DEBUG
+//            services.AddDbContext<BbinDbContext>(options =>
+//               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
+//               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+//            );
+//#else
             services.AddDbContext<BbinDbContext>(options => 
                 options.UseMySQL(Configuration.GetConnectionString("BbinDbContext")
                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
-#endif
+//#endif
 
             services.AddScoped<IResultDbService, ResultDbService>();
             services.AddScoped<IGameDbService, GameDbService>();
@@ -72,6 +72,8 @@ namespace Bbin.ManagerWebApp
                 //设置时间格式
                 options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
             });
+
+            ApplicationContext.ServiceProvider = services.BuildServiceProvider();
         }
        
 
@@ -118,7 +120,7 @@ namespace Bbin.ManagerWebApp
                 endpoints.MapHub<GameHub>("/gameHub");
             });
 
-            ApplicationContext.ServiceProvider = app.ApplicationServices;
+            //ApplicationContext.ServiceProvider = app.ApplicationServices;
         }
     }
 }

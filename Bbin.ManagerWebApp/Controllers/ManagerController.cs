@@ -11,6 +11,8 @@ using Bbin.Core.Models;
 using Bbin.Core.Cons;
 using Bbin.Core.Commandargs;
 using Bbin.Manager.ActionExecutors;
+using Bbin.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
@@ -18,13 +20,11 @@ namespace Bbin.ManagerWebApp.Controllers
     {
         private readonly ILogger<ManagerController> _logger;
 
-        private ManagerApplicationContext _managerApplicationContext;
 
 
-        public ManagerController(ILogger<ManagerController> logger, ManagerApplicationContext managerApplicationContext)
+        public ManagerController(ILogger<ManagerController> logger)
         {
             _logger = logger;
-            _managerApplicationContext = managerApplicationContext;
         }
 
         /// <summary>
@@ -33,11 +33,13 @@ namespace Bbin.ManagerWebApp.Controllers
         /// <returns></returns>
         public IActionResult Index()
         {
+            var _managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
             return View(_managerApplicationContext.Sniffers.OrderBy(x => x.QueueName));
         }
         [HttpGet]
         public IActionResult Start(string queueName)
         {
+            var _managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
             var sniffer = _managerApplicationContext.GetSniffer(queueName);
             return View(sniffer);
         }
@@ -57,6 +59,7 @@ namespace Bbin.ManagerWebApp.Controllers
         /// <returns></returns>
         public IActionResult SnifferStart(string queueName)
         {
+            var _managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
             var sniffer = _managerApplicationContext.GetSniffer(queueName);
 
             //发动采集申请
@@ -73,6 +76,7 @@ namespace Bbin.ManagerWebApp.Controllers
         /// <returns></returns>
         public IActionResult SnifferStop(string queueName)
         {
+            var _managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
             var sniffer = _managerApplicationContext.GetSniffer(queueName);
 
             //发动采集申请

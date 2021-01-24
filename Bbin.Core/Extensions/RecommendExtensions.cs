@@ -62,6 +62,10 @@ namespace Bbin.Core.Extensions
                     }
                 }
                 lastCol.Add(tempState);
+                if (lastCol.Count % 6 == 0)
+                {
+                    colResults.Add(new List<ResultState>());
+                }
             }
 
             //最后一列没数据，则清空

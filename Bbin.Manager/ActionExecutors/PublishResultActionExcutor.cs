@@ -66,7 +66,7 @@ namespace Bbin.Manager.ActionExecutors
             var _hubContext = ApplicationContext.ServiceProvider.GetService<IHubContext<GameHub>>();
             var resultModel = result.Game.ToGameResultModel(results);
             string groupName = GroupExtension.GetGroupName(result.Game.RoomId);
-            _hubContext.Clients.Groups(groupName).SendAsync("PushResult", resultModel);
+            _hubContext.Clients.Groups(groupName).SendAsync(HubCons.PushResult, resultModel.ToPushGameResultModel(recommendBet));
 
             return null;
         }

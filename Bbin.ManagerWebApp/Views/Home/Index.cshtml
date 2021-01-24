@@ -1,0 +1,57 @@
+﻿@model Dictionary<string, string>
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*<h1>Index</h1>*@
+@section Scripts
+{
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/GameHub.js"></script>
+    <script>
+        var roomTables = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    </script>
+}
+<style>
+    .row .rooms dd {
+        float: left;
+        min-width: 100px;
+    }
+    .row .col-room {
+        width: 350px;
+        border: 1px solid red;
+        margin-right: 10px;
+    }
+
+        .row .col-room .title, .row .col-room .number, .row .col-room .result, .row .col-room .recommend {
+            width: 100%;
+        }
+
+        .row .col-room .number, .row .col-room .result {
+            height: 180px;
+            margin-top: 10px;
+            border: 1px solid red;
+        }
+</style>
+<div class="row">
+    <dl class="rooms">
+        @foreach (var item in Model)
+        {
+        <dd>
+            <input type="checkbox" id="chk_@item.Key" name="chk_roomId" value="@item.Key" checked="checked" />
+            <label for="chk_@item.Key">@item.Value</label>
+        </dd>
+        }
+    </dl>
+</div>
+<dl class="row">
+    @foreach (var item in Model)
+    {
+        <dd class="col-room" id="room_@item.Key">
+            <div class="title"><span class="roomName">@item.Value</span><span class="roomIndex"></span><span class="roomDate"></span></div>
+            <div class="number"></div>
+            <div class="result"></div>
+            <div class="recommend"></div>
+        </dd>
+    }
+</dl>

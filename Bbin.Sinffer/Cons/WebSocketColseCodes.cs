@@ -9,7 +9,7 @@ namespace Bbin.Sniffer.Cons
         /// <summary>
         /// 手动关闭连接
         /// </summary>
-        public const ushort ManualShutdown = 3003;
+        public const ushort ManualShutdown = 3000;
         /// <summary>
         /// SessionId 无效
         /// </summary>

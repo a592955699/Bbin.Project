@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Bbin.Core.Cons;
 using Bbin.Core.Extensions;
 using Bbin.Core.Models.UI;
+using log4net;
 using Microsoft.AspNetCore.SignalR;
 
 
@@ -10,8 +12,14 @@ namespace Bbin.ManagerWebApp.Hubs
 {
     public class GameHub : Hub<IGameHub>
     {
+        private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(GameHub));
         public GameHub() { 
         
+        }
+
+        public void Test(string message)
+        {
+            
         }
 
         /// <summary>
@@ -114,5 +122,11 @@ namespace Bbin.ManagerWebApp.Hubs
         {
             await Clients.OthersInGroup(groupName).SendToOthersInGroupAsync(message);
         }
+
+        //public override Task OnDisconnectedAsync(Exception exception)
+        //{
+        //    log.Error(exception);
+        //    return base.OnDisconnectedAsync(exception);
+        //}
     }
 }

@@ -139,6 +139,13 @@ namespace Bbin.Sniffer
         {
             var eventArgs = (CloseEventArgs)e;
 
+            //手动关闭
+            if (eventArgs.Code == WebSocketColseCodes.ManualShutdown)
+            {
+                log.Warn($"【警告】手动断开 ws 链接！");
+                return;
+            }
+
             //账号 SessionId 过期
             if (eventArgs.Code == WebSocketColseCodes.API_EC_ACC_SID_INVALID)
             {
@@ -146,28 +153,28 @@ namespace Bbin.Sniffer
                 Start();
                 return;
             }
-            //手动关闭
-            if (eventArgs.Code == WebSocketColseCodes.ManualShutdown)
-            {
-                log.Warn($"【警告】手动断开 ws 链接！");
-                return;
-            }
             //网络不稳定
-            if (eventArgs.Code == (ushort)CloseStatusCode.Abnormal)
+            else if (eventArgs.Code == (ushort)CloseStatusCode.Abnormal)
             {
                 if ((++SocketService.ReConnectionTimes) % 5 == 0)
                 {
-                    log.Warn($"【警告】网络不稳定，重新次数过多，等待30秒！");
-                    Thread.Sleep(30 * 1000);
+                    log.Warn($"【警告】网络不稳定，重新次数过多，准备休眠 5S 后开始重新连接！");
+                    Thread.Sleep(5 * 1000);
                 }
-                log.Warn($"【警告】网络不稳定，开始重新连接！");
+                else
+                {
+                    log.Warn($"【警告】网络不稳定，准备开始重新连接！");
+                }
                 //自动重连
                 SocketService.Connect();
                 return;
             }
-            log.Warn($"【警告】已断开 ws 链接！Code:{eventArgs.Code} Reason:{eventArgs.Reason}，开始重新连接！");
-            //其他原因，自动重连
-            SocketService.Connect();
+            else
+            {
+                log.Warn($"【警告】已断开 ws 链接！Code:{eventArgs.Code} Reason:{eventArgs.Reason}，开始重新连接！");
+                //其他原因，自动重连
+                SocketService.Connect();
+            }
         }
         #endregion
     }

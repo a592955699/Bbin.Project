@@ -130,15 +130,15 @@ $(document).ready(function () {
 });
 
 function joinGroup() {
-    console.log("准备加入组")
-    var joinGroups = new Array();
-    var checkRooms = $('input[name=chk_roomId][type=checkbox]:checked');
-    checkRooms.each(function (i) {
-        joinGroups.push(getRoomIdGroupName($(this).val()));
-    });
-    connection.invoke("JoinGroups", joinGroups).catch(function (err) {
-        return console.log(err.toString());
-    });
+    //console.log("准备加入组")
+    //var joinGroups = new Array();
+    //var checkRooms = $('input[name=chk_roomId][type=checkbox]:checked');
+    //checkRooms.each(function (i) {
+    //    joinGroups.push(getRoomIdGroupName($(this).val()));
+    //});
+    //connection.invoke("JoinGroups", joinGroups).catch(function (err) {
+    //    return console.log(err.toString());
+    //});
 }
 function getRoomIdGroupName(roomId) {
     return "room_" + roomId;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Bbin.Core.Models.UI.PushGameResultModel;
 
 namespace Bbin.Core.Extensions
 {
@@ -46,7 +47,7 @@ namespace Bbin.Core.Extensions
             }
             return numberResults;
         }
-        public static PushGameResultModel ToPushGameResultModel(this GameResultModel gameResultModel, Dictionary<RecommendTemplateEntity, ResultState> recommend)
+        public static PushGameResultModel ToPushGameResultModel(this GameResultModel gameResultModel, List<RecommendResultItem> recommend)
         {
             return new PushGameResultModel() { 
                 GameId = gameResultModel.GameId,                

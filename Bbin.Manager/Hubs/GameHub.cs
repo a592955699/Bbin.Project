@@ -10,16 +10,20 @@ namespace Bbin.ManagerWebApp.Hubs
 {
     public class GameHub : Hub<IGameHub>
     {
-        ///// <summary>
-        ///// 推送结果
-        ///// </summary>
-        ///// <param name="groupName"></param>
-        ///// <returns></returns>
-        //public async Task PushResult(PushGameResultModel gameResult)
-        //{
-        //    string groupName = GroupExtension.GetGroupName(gameResult.RoomId);
-        //    await Clients.Group(groupName).PushResult(gameResult);
-        //}
+        public GameHub() { 
+        
+        }
+
+        /// <summary>
+        /// 推送结果
+        /// </summary>
+        /// <param name="groupName"></param>
+        /// <returns></returns>
+        public async Task PushResult(PushGameResultModel gameResult)
+        {
+            string groupName = GroupExtension.GetGroupName(gameResult.RoomId);
+            await Clients.Group(groupName).PushResult(gameResult);
+        }
         /// <summary>
         /// 加入组
         /// </summary>
@@ -42,7 +46,6 @@ namespace Bbin.ManagerWebApp.Hubs
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             }
-
             await Clients.Caller.JoinGroupAsync(String.Join(",", groupNames));
         }
         /// <summary>

@@ -52,8 +52,8 @@ namespace Bbin.Sniffer
                     bool loginState = LoginService.CheckAndLogin();
                     if (!loginState)
                     {
-                        log.Warn("【警告】账号认证失败，无法链接ws.等待10S后重试");
-                        Thread.Sleep(10000);
+                        log.Warn("【警告】账号认证失败，无法链接ws.等待1S后重试");
+                        Thread.Sleep(1000);
                     }
 
                     LoginService.InternalGetBbinSessionId();
@@ -62,8 +62,8 @@ namespace Bbin.Sniffer
                 }
                 catch (Exception ex)
                 {
-                    log.Warn("【警告】账号认证异常,等待10S后重试", ex);
-                    Thread.Sleep(10000);
+                    log.Warn("【警告】账号认证异常,等待1S后重试", ex);
+                    Thread.Sleep(1000);
                 }
             }
             while (Work);

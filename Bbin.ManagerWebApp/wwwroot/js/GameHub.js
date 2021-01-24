@@ -16,11 +16,6 @@ connection.on("JoinGroups", function (groupName) {
     console.log(encodedMsg);
 });
 
-connection.on("JoinGroups", function (groupName) {
-    var encodedMsg = "已经加入组 " + groupName;
-    console.log(encodedMsg);
-});
-
 connection.on("LeaveGroup", function (groupName) {
     var encodedMsg = "已经离开 " + groupName;
     console.log(encodedMsg);
@@ -32,106 +27,119 @@ connection.on("LeaveGroups", function (groupName) {
 });
 
 connection.on("PushResult", function (data) {
+    console.log(data);
     //room 大块
-    var roomBlock = $("#" + getRoomName(data.RoomId));
+    var roomBlock = $("#" + getRoomIdGroupName(data.roomId));
 
     //清空推荐
     roomBlock.find(".recommend").empty();
     
     //标题
-    roomBlock.find(".title .roomIndex").text(data.Index);
-    roomBlock.find(".title .roomDate").text(data.Date);
+    roomBlock.find(".title .roomIndex").text(data.index);
+    roomBlock.find(".title .roomDate").text(data.date);
 
     //数字结果
-    var nubmerBlock = roomBlock.find("number");
-    data.NumberResults.each(function (i) {
-        var item = $(this);
-        nubmerBlock.append('<div class="cell state-' + item.ResultState+'" title="顺序:' + item.Index + '">' + item.Number+'</div>');
-    });
+    var nubmerBlock = roomBlock.find(".number");
+    nubmerBlock.empty();
+    for (var i = 0; i < data.numberResults.length; i++) {
+        var item = data.numberResults[i];
+        nubmerBlock.append('<div class="cell state-' + item.resultState + '" title="顺序:' + item.index + '">' + item.number + '</div>');
+    }
 
     //颜色结果
-    var resultBlock = roomBlock.find("result");
-    data.ColumnResults.each(function (colIndex) {
-        var col = $(this);
-        col.each(function (cellIndex) {
-            var item = $(this);
-            resultBlock.append('<div class="cell state-' + item.ResultState + '">' + item.Number + '</div>');
-        });
+    var resultBlock = roomBlock.find(".result");
+    resultBlock.empty();
 
-        if (col.length % 6 != 0) {
+    var columns = data.columnResults;
+    //庄闲结果，只取最后12列
+    var maxCol = 12;
+    if (data.columnResults.length > maxCol) {
+        columns = new Array();
+        for (var i = data.columnResults.length - maxCol; i < data.columnResults.length; i++) {
+            columns.push(data.columnResults[i]);
+        }
+    }
+
+    for (var i = 0; i < columns.length; i++) {
+        var col = columns[i];
+        for (var j = 0; j < col.length; j++) {
+            var item = col[j];
+            resultBlock.append('<div class="cell state-' + item + '"></div>');
+        }
+        if (col.length % 6 !== 0) {
             var fill = 6 - col.length % 6;
             for (var f = 0; f < fill; f++) {
                 resultBlock.append('<div class="cell state-0"></div>');
-            }            
+            }
         }
-    });
+    }
 
-    if (data.Recommend !== null && data.Recommend.length > 0) {
+    if (data.recommend !== null && data.recommend.length > 0) {
+       
+        console.log(data.recommend);
         var array = new Array();
-        data.Recommend.each(function (i) {
-            array.push($(this).Key.Name)
-        });
+        for (var i = 0; i < data.recommend.length; i++) {
+            var item = data.recommend[i];
+            array.push(item.name + " " + item.resultState);
+        }
+       
         roomBlock.find(".recommend").html(array.join(","));
+        console.log(data.roomId + " " + data.roomName + " 推荐结果:" + array.join(","));
     }
 });
 
 connection.start().then(function () {
+    console.log("connected");
     joinGroup();
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
-$(document).ready(function () {
-    $('input[name=chk_roomId][type=checkbox]').click(function () {
-        var roomId = $(this).val();
-        if ($(this).is(':checked')) {
-            $("#result_" + roomId).show();
-            connection.invoke("JoinGroup", getRoomIdGroupName(roomId)).catch(function (err) {
-                return console.error(err.toString());
-            });
-        }
-        else {
-            $("#result_" + roomId).hide();
-            connection.invoke("LeaveGroup", getRoomIdGroupName(roomId)).catch(function (err) {
-                return console.error(err.toString());
-            });
-        }
-    });
+connection.onclose(async () => {
+    console.log("closed");
+    await start();
 });
 
+//处理链接关闭情况，onclose监听服务器断开和客户端主动断开  ，try catch 监听服务器无法访问等
+//在实际应用中，重新连接超过指定次数后放弃
+async function start() {
+    try {
+        await connection.start();        
+    } catch (err) {
+        console.log(err);
+        setTimeout(() => start(), 1000);
+    }
+};
+
+$(document).ready(function () {
+    //$('input[name=chk_roomId][type=checkbox]').click(function () {
+    //    var roomId = $(this).val();
+    //    if ($(this).is(':checked')) {
+    //        $("#result_" + roomId).show();
+    //        connection.invoke("JoinGroup", getRoomIdGroupName(roomId)).catch(function (err) {
+    //            return console.error(err.toString());
+    //        });
+    //    }
+    //    else {
+    //        $("#result_" + roomId).hide();
+    //        connection.invoke("LeaveGroup", getRoomIdGroupName(roomId)).catch(function (err) {
+    //            return console.error(err.toString());
+    //        });
+    //    }
+    //});
+});
 
 function joinGroup() {
+    console.log("准备加入组")
     var joinGroups = new Array();
     var checkRooms = $('input[name=chk_roomId][type=checkbox]:checked');
     checkRooms.each(function (i) {
         joinGroups.push(getRoomIdGroupName($(this).val()));
     });
     connection.invoke("JoinGroups", joinGroups).catch(function (err) {
-        return console.error(err.toString());
+        return console.log(err.toString());
     });
-}
-
-
-function getRooms() {
-    return roomTables;
-}
-
-function getRoomName(roomId) {
-    var rooms = getRooms();
-    return rooms[roomId] === null ? roomId : rooms[roomId];
 }
 function getRoomIdGroupName(roomId) {
     return "room_" + roomId;
-}
-function getResultStateText(resultState) {
-    switch (resultState) {
-        case 3:
-            return "庄";
-        case 2:
-            return "和";
-        case 1:
-            return "闲";
-        default:
-            return "";
-    }
 }

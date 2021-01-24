@@ -13,12 +13,16 @@
     </script>
 }
 <style>
+    .clear{
+        clear:both;
+    }
     .row .rooms dd {
         float: left;
         min-width: 100px;
     }
     .row .col-room {
-        width: 350px;
+        width: 363px;
+        height:440px;
         border: 1px solid red;
         margin-right: 10px;
     }
@@ -28,10 +32,45 @@
         }
 
         .row .col-room .number, .row .col-room .result {
-            height: 180px;
+            height: 182px;
             margin-top: 10px;
             border: 1px solid red;
+            writing-mode: vertical-lr;
         }
+
+
+            .row .col-room .number .cell {
+                text-align: center;
+                border: 1px solid black;
+                display: block;
+                float: left;
+                width: 30px;
+                height: 30px;
+                margin: 0px;
+                writing-mode: horizontal-tb;
+            }
+            .row .col-room .result .cell {
+                text-align: center;
+                border: 1px solid black;
+                display: block;
+                float: left;
+                width: 30px;
+                height: 30px;
+                margin: 0px;
+                writing-mode: horizontal-tb;
+            }
+
+                .row .col-room  .state-1 {
+                    background-color: darkred;
+                    color: white;
+                }
+                .row .col-room  .state-2 {
+                    background-color: chartreuse;
+                }
+                .row .col-room  .state-3 {
+                    background-color: cadetblue;
+                }
+
 </style>
 <div class="row">
     <dl class="rooms">
@@ -47,11 +86,12 @@
 <dl class="row">
     @foreach (var item in Model)
     {
-        <dd class="col-room" id="room_@item.Key">
-            <div class="title"><span class="roomName">@item.Value</span><span class="roomIndex"></span><span class="roomDate"></span></div>
-            <div class="number"></div>
-            <div class="result"></div>
-            <div class="recommend"></div>
-        </dd>
+    <dd class="col-room" id="room_@item.Key">
+        <div class="title"><span class="roomName">@item.Value</span>&nbsp;&nbsp;<b><span class="roomIndex"></span></b>&nbsp;&nbsp;<span class="roomDate"></span></div>
+        <div class="number"></div>
+        <div class="result"></div>
+        <div class="recommend"></div>
+        <div class="clear"></div>
+    </dd>
     }
 </dl>

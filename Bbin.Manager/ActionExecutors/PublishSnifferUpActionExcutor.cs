@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.SignalR;
+using Bbin.ManagerWebApp.Hubs;
 
 namespace Bbin.Manager.ActionExecutors
 {

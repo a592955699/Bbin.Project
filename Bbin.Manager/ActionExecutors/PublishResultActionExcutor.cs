@@ -13,6 +13,7 @@ using Bbin.Core.Enums;
 using Bbin.Core.Entitys;
 using Microsoft.AspNetCore.SignalR;
 using Bbin.ManagerWebApp.Hubs;
+using static Bbin.Core.Models.UI.PushGameResultModel;
 
 namespace Bbin.Manager.ActionExecutors
 {
@@ -20,6 +21,11 @@ namespace Bbin.Manager.ActionExecutors
     {
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(PublishResultActionExcutor));
 
+        //private IHubContext<GameHub> HubContext { get; set; }
+        //public PublishResultActionExcutor(IHubContext<GameHub> hubContext)
+        //{
+        //    HubContext = hubContext;
+        //}
         public object DoExecute(params object[] args)
         {
             string jsonString = args[0].ToString();
@@ -50,24 +56,28 @@ namespace Bbin.Manager.ActionExecutors
             }
             var managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
 
-            Dictionary<RecommendTemplateEntity, ResultState> recommendBet = new Dictionary<RecommendTemplateEntity, ResultState>();
+            List<RecommendResultItem> recommendResultItems = new List<RecommendResultItem>();
             ResultState betState;
             foreach (var recommendTemplateModel in managerApplicationContext.RecommendTemplateModels)
             {
                 if(results.IsRecommend(recommendTemplateModel, result.Index) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
-                    recommendBet.Add(recommendTemplateModel.Template, betState);
+                    recommendResultItems.Add(new RecommendResultItem() { Id= recommendTemplateModel.Template.Id,Name= recommendTemplateModel .Template.Name,ResultState=betState});
                     log.Info($"【提示】Room :{result.Game.RoomId} ({RoomCons.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
                     Console.WriteLine($"【提示】Room :{result.Game.RoomId} ({RoomCons.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
                 }
             }
 
             //#TODO 推送推荐下注
-            var _hubContext = ApplicationContext.ServiceProvider.GetService<IHubContext<GameHub>>();
-            var resultModel = result.Game.ToGameResultModel(results);
-            string groupName = GroupExtension.GetGroupName(result.Game.RoomId);
-            _hubContext.Clients.Groups(groupName).SendAsync(HubCons.PushResult, resultModel.ToPushGameResultModel(recommendBet));
 
+            var hubContext = ApplicationContext.ServiceProvider.GetRequiredService<IHubContext<GameHub>>();
+
+            var resultModel = result.Game.ToGameResultModel(results);
+            var pushResultModel = resultModel.ToPushGameResultModel(recommendResultItems);
+            string groupName = GroupExtension.GetGroupName(result.Game.RoomId);
+            //HubContext.Clients.Groups(groupName).SendAsync(HubCons.PushResult, pushResultModel);
+            log.Debug("推送数据到 ui");
+            hubContext.Clients.All.SendAsync(HubCons.PushResult, pushResultModel);
             return null;
         }
     }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Bbin.Core.Configs;
+using System.IO;
 
 namespace Bbin.ResultConsoleApp
 {
@@ -18,8 +19,7 @@ namespace Bbin.ResultConsoleApp
         public static void Main(string[] args)
         {
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Result 端)!本程序只是做学习交流使用，请勿用于商业用途！");
-            ApplicationContext.ConfigureLog4Net(false);
-            //ApplicationContext.ConfigureAppsettingsJson();
+            ApplicationContext.ConfigureLog4Net(true);
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);
@@ -30,10 +30,11 @@ namespace Bbin.ResultConsoleApp
             var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
+                var serviceProvider = scope.ServiceProvider;
+                ApplicationContext.ServiceProvider = serviceProvider;
                 try
                 {
-                    IResultService resultService = services.GetService<IResultService>();
+                    IResultService resultService = serviceProvider.GetService<IResultService>();
                     resultService.Listener();
                 }
                 catch (Exception ex)
@@ -45,27 +46,40 @@ namespace Bbin.ResultConsoleApp
         }
 
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-       Host.CreateDefaultBuilder(args)
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
-                services.AddScoped<IResultDbService, ResultDbService>();
-                services.AddScoped<IGameDbService, GameDbService>();
-                services.AddScoped<IMQService, RabbitMQService>();
-                services.AddScoped<IResultService, ResultService>();
-//#if DEBUG
-//                services.AddDbContext<BbinDbContext>(options =>
-//                   options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
-//                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
-//                );
-//#else
-                services.AddDbContext<BbinDbContext>(options => 
-                options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
-                   , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
-//#endif
-                ApplicationContext.ServiceProvider = services.BuildServiceProvider();
-                ApplicationContext.Configuration = hostContext.Configuration;
-            });
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return new HostBuilder()
+        .ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            config.SetBasePath(Directory.GetCurrentDirectory());
+#if DEBUG
+            config.AddJsonFile("appsettings.Development.json", true);
+#else
+            config.AddJsonFile("appsettings.json", true);
+#endif
+            if (args != null) config.AddCommandLine(args);
+        })
+        .ConfigureServices((hostContext, services) =>
+        {
+            services.AddSingleton(hostContext.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>());
+            services.AddScoped<IResultDbService, ResultDbService>();
+            services.AddScoped<IGameDbService, GameDbService>();
+            services.AddScoped<IMQService, RabbitMQService>();
+            services.AddScoped<IResultService, ResultService>();
+#if DEBUG
+            services.AddDbContext<BbinDbContext>(options =>
+                    options.UseSqlServer(hostContext.Configuration.GetConnectionString("BbinDbContext")
+                    , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
+                 );
+#else
+            services.AddDbContext<BbinDbContext>(options => 
+            options.UseMySQL(hostContext.Configuration.GetConnectionString("BbinDbContext")
+               , b => b.MigrationsAssembly("Bbin.ResultConsoleApp")));
+#endif
+            
+            ApplicationContext.Configuration = hostContext.Configuration;
+        });
+
+        }
     }
 }

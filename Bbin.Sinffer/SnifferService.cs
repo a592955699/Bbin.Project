@@ -103,7 +103,8 @@ namespace Bbin.Sniffer
         private void WebSocketWrap_OnStateChange(object sender, EventArgs e)
         {
             var eventArgs = (StateChangeEventArgs)e;
-            log.Debug($"【提示】状态改变 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs}  St:{eventArgs.St}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】状态改变 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs}  St:{eventArgs.St}");
         }
 
         private void WebSocketWrap_OnFullResult(object sender, EventArgs e)
@@ -116,19 +117,22 @@ namespace Bbin.Sniffer
             }
             log.Info($"【提示】采集全部结果 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
             MQService.PublishRound(eventArgs.Round);
-            log.Info($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");
         }
 
         private void WebSocketWrap_OnDealingResult(object sender, EventArgs e)
         {
             var eventArgs = (DealingResultEventArgs)e;
-            log.Debug($"【提示】发牌 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 部分结果 {eventArgs.Pk}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】发牌 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 部分结果 {eventArgs.Pk}");
         }
 
         private void WebSocketWrap_OnCd(object sender, EventArgs e)
         {
             var eventArgs = (CdEventArgs)e;
-            log.Debug($"【提示】倒计时 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 倒计时 {eventArgs.Cd}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】倒计时 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 倒计时 {eventArgs.Cd}");
         }
 
         private void WebSocketWrap_OnClosed(object sender, EventArgs e)

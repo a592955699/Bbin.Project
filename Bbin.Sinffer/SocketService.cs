@@ -174,7 +174,8 @@ namespace Bbin.Sniffer
         /// <param name="completed"></param>
         public void Send(string data)
         {
-            log.DebugFormat("【提示】发送数据:{0}", data);
+            if (log.IsDebugEnabled)
+                log.DebugFormat("【提示】发送数据:{0}", data);
             try
             {
                 Task.Run(()=> {
@@ -324,7 +325,8 @@ namespace Bbin.Sniffer
         {
             try
             {
-                //log.DebugFormat("【提示】接收数据:{0}", e.Data);
+                if(log.IsDebugEnabled)
+                    log.DebugFormat("【提示】接收数据:{0}", e.Data);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(e.Data);
                 var actionName = GetActionName(dict);
 

@@ -12,15 +12,15 @@ namespace Bbin.Manager.ActionExecutors
 {
     public abstract class RabbitMQUtils 
     {
-        /// <summary>
-        /// 广播
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="queue"></param>
-        public static void SendMessage<T>(QueueModel<T> queue)
-        {
+        ///// <summary>
+        ///// 广播
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="queue"></param>
+        //public static void SendMessage<T>(QueueModel<T> queue)
+        //{
 
-        }
+        //}
         /// <summary>
         /// p2p
         /// </summary>

@@ -35,31 +35,31 @@ namespace Bbin.Result
                 {
                     if (queueModel == null || queueModel.Data == null)
                     {
-                        log.Warn($"【警告】Round 转 Result 失败,数据不完整！");
+                        log.Warn($"【警告】数据转换失败,原因：数据不完整!");
                         return;
                     }
                     var round = queueModel.Data;
                     if (string.IsNullOrWhiteSpace(round?.Rn))
                     {
-                        log.Warn($"【警告】Round 转 Result 失败,数据不完整！{JsonConvert.SerializeObject(round)}");
+                        log.Warn($"【警告】数据转换失败,原因：数据不完整!{JsonConvert.SerializeObject(round)}");
                         return;
                     }
                     ResultEntity result = round.ToResult();
                     if (result == null)
                     {
-                        log.Warn($"【警告】Round 转 Result 失败！{ JsonConvert.SerializeObject(round)}");
+                        log.Warn($"【警告】数据转换失败,原因：round.ToResult() = null!{ JsonConvert.SerializeObject(round)}");
                         return;
                     }
                     if (resultDbService.FindByRs(result.Rs) != null)
                     {
-                        log.Info($"【提示】结果已存在！跳过后续操作！{JsonConvert.SerializeObject(round)}");
+                        log.Info($"【提示】跳过后续操作,原因：结果已存在！{JsonConvert.SerializeObject(round)}");
                         return;
                     }
 
                     GetGame(round, result, out GameEntity game, out bool isNes);
                     if (game == null)
                     {
-                        log.Warn($"【警告】处理结果失败！game=null Json:{JsonConvert.SerializeObject(round)}");
+                        log.Warn($"【警告】数据处理失败,原因：game=null Json:{JsonConvert.SerializeObject(round)}");
                         return;
                     }
 
@@ -73,11 +73,11 @@ namespace Bbin.Result
                         if (dbGame == null || (DateTime.Now - dbGame.DateTime).TotalHours > 2)
                         {
                             gameDbService.Insert(game);
-                            log.Info($"【提示】靴不存在！新增靴! {JsonConvert.SerializeObject(result)}");
+                            log.Info($"【提示】数据转换成功，新增靴，原因：靴不存在!{JsonConvert.SerializeObject(result)}");
                         }
                         else
                         {
-                            log.Info($"【提示】靴已存在！不新增靴!{JsonConvert.SerializeObject(result)}");
+                            log.Info($"【提示】数据转换成功，不新增靴，原因：靴已存在!{JsonConvert.SerializeObject(result)}");
                         }
                     }
 
@@ -117,10 +117,17 @@ namespace Bbin.Result
             else
             {
                 var preResult = resultDbService.FindLastResult(result.Game.RoomId, result.Game.Date, result.Game.Index);
-                if(preResult==null)
+                if (preResult==null)
                 {
                     //推测跨天，获取前一天的上一个结果
                     preResult = resultDbService.FindLastResult(result.Game.RoomId, result.Begin.AddDays(-1).ToString("yyyyMMdd"), result.Game.Index);
+                    if (log.IsDebugEnabled)
+                        log.Debug($"【提示】查找到上一天上一个结果,{JsonConvert.SerializeObject(preResult)}");
+                }
+                else
+                {
+                    if (log.IsDebugEnabled)
+                        log.Debug($"【提示】查找到同一天上一个结果,{JsonConvert.SerializeObject(preResult)}");
                 }
                 if (preResult != null && (result.Begin - preResult.Begin).TotalMinutes <= 10)
                 {

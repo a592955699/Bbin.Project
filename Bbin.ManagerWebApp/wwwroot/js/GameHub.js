@@ -32,7 +32,8 @@ connection.on("PushResult", function (data) {
     var roomBlock = $("#" + getRoomIdGroupName(data.roomId));
 
     //清空推荐
-    roomBlock.find(".recommend").empty();
+    var recommendBlock = roomBlock.find(".recommend");
+    recommendBlock.empty().hide();
     
     //标题
     roomBlock.find(".title .roomIndex").text(data.index);
@@ -43,7 +44,7 @@ connection.on("PushResult", function (data) {
     nubmerBlock.empty();
     for (var i = 0; i < data.numberResults.length; i++) {
         var item = data.numberResults[i];
-        nubmerBlock.append('<div class="cell state-' + item.resultState + '" title="顺序:' + item.index + '">' + item.number + '</div>');
+        nubmerBlock.append('<div class="cell state-' + item.resultState + '" title="顺序:' + item.index + '">' + (item.number === 0 ? "" : item.number) + '</div>');
     }
 
     //颜色结果
@@ -52,7 +53,7 @@ connection.on("PushResult", function (data) {
 
     var columns = data.columnResults;
     //庄闲结果，只取最后12列
-    var maxCol = 12;
+    var maxCol = 18;
     if (data.columnResults.length > maxCol) {
         columns = new Array();
         for (var i = data.columnResults.length - maxCol; i < data.columnResults.length; i++) {
@@ -80,53 +81,53 @@ connection.on("PushResult", function (data) {
         var array = new Array();
         for (var i = 0; i < data.recommend.length; i++) {
             var item = data.recommend[i];
-            array.push(item.name + " " + item.resultState);
+            array.push(item.name + " 推荐:(" + getRecommendTypeText(item.recommendType) + ")" + getResultStateText(item.resultState));
         }
-       
-        roomBlock.find(".recommend").html(array.join(","));
+
+        recommendBlock.html(array.join(",")).show();
         console.log(data.roomId + " " + data.roomName + " 推荐结果:" + array.join(","));
     }
 });
 
-connection.start().then(function () {
-    console.log("connected");
-    joinGroup();
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
 connection.onclose(async () => {
     console.log("closed");
-    await start();
+    setTimeout(() => start(), 5000);
 });
 
 //处理链接关闭情况，onclose监听服务器断开和客户端主动断开  ，try catch 监听服务器无法访问等
 //在实际应用中，重新连接超过指定次数后放弃
 async function start() {
     try {
-        await connection.start();        
+        console.log("准备重连...");
+        connection.start().then(function () {
+            console.log("connected");
+            joinGroup();
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
     } catch (err) {
         console.log(err);
         setTimeout(() => start(), 1000);
     }
 };
 
-$(document).ready(function () {
-    //$('input[name=chk_roomId][type=checkbox]').click(function () {
-    //    var roomId = $(this).val();
-    //    if ($(this).is(':checked')) {
-    //        $("#result_" + roomId).show();
-    //        connection.invoke("JoinGroup", getRoomIdGroupName(roomId)).catch(function (err) {
-    //            return console.error(err.toString());
-    //        });
-    //    }
-    //    else {
-    //        $("#result_" + roomId).hide();
-    //        connection.invoke("LeaveGroup", getRoomIdGroupName(roomId)).catch(function (err) {
-    //            return console.error(err.toString());
-    //        });
-    //    }
-    //});
+$(document).ready(async function () {
+    await start();
+    $('input[name=chk_roomId][type=checkbox]').click(function () {
+        var roomId = $(this).val();
+        if ($(this).is(':checked')) {
+            $("#result_" + roomId).show();
+            connection.invoke("JoinGroup", getRoomIdGroupName(roomId)).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+        else {
+            $("#result_" + roomId).hide();
+            connection.invoke("LeaveGroup", getRoomIdGroupName(roomId)).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
 });
 
 function joinGroup() {
@@ -142,4 +143,27 @@ function joinGroup() {
 }
 function getRoomIdGroupName(roomId) {
     return "room_" + roomId;
+}
+
+function getResultStateText(resultState) {
+    switch (resultState) {
+        case 3:
+            return "庄";
+        case 2:
+            return "和";
+        case 1:
+            return "闲";
+        default:
+            return "";
+    }
+}
+function getRecommendTypeText(recommendType) {
+    switch (recommendType) {
+        case 0:
+            return "跟";
+        case 1:
+            return "断";
+        default:
+            return "";
+    }
 }

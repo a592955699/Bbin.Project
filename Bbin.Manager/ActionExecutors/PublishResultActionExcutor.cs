@@ -62,7 +62,7 @@ namespace Bbin.Manager.ActionExecutors
             {
                 if(results.IsRecommend(recommendTemplateModel, result.Index) && recommendTemplateModel.IsRecommendBet(out betState))
                 {
-                    recommendResultItems.Add(new RecommendResultItem() { Id= recommendTemplateModel.Template.Id,Name= recommendTemplateModel .Template.Name,ResultState=betState});
+                    recommendResultItems.Add(new RecommendResultItem() { Id= recommendTemplateModel.Template.Id,Name= recommendTemplateModel .Template.Name,ResultState=betState, RecommendType  = recommendTemplateModel.Template.RecommendType});
                     log.Info($"【提示】Room :{result.Game.RoomId} ({RoomCons.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
                     Console.WriteLine($"【提示】Room :{result.Game.RoomId} ({RoomCons.GetRoomName(result.Game.RoomId)}) Name:{recommendTemplateModel.Template.Name} 推荐策略 {recommendTemplateModel.Template.RecommendType} Id:{recommendTemplateModel.Template.Id}  推荐下注 { betState}！ GameId:{result.Game.GameId} rs:{rs}");
                 }

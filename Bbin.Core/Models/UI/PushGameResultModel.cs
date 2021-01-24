@@ -22,6 +22,10 @@ namespace Bbin.Core.Models.UI
             /// </summary>
             public string Name { get; set; }
             public ResultState ResultState { get; set; }
+            /// <summary>
+            /// 下注推荐规则
+            /// </summary>
+            public RecommendTypeEnum RecommendType { get; set; }
         }
     }
 }

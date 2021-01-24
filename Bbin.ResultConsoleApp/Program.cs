@@ -19,7 +19,7 @@ namespace Bbin.ResultConsoleApp
         public static void Main(string[] args)
         {
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Result 端)!本程序只是做学习交流使用，请勿用于商业用途！");
-            ApplicationContext.ConfigureLog4Net(true);
+            ApplicationContext.ConfigureLog4Net(false);
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);

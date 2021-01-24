@@ -17,7 +17,6 @@ namespace Bbin.SnifferActionExecutors
 {
     public class OnUpdateGameInfoAction : AbstractWsActionExecutor
     {
-        ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(OnUpdateGameInfoAction));
         /// <summary>
         /// 过滤采集的牌桌
         /// </summary>
@@ -32,7 +31,7 @@ namespace Bbin.SnifferActionExecutors
                 TableMap = bbinConfig.Rooms;
             }
         }
-        public override object DoExecute(params object[] paras)
+        public override void Execute(params object[] paras)
         {
             var sl = (JObject)Data["sl"];
             var slDict = sl.ToObject<Dictionary<string, Dictionary<string, object>>>();
@@ -117,9 +116,7 @@ namespace Bbin.SnifferActionExecutors
                 }
                 log.Debug(DateTime.Now.ToString("HH:mm:ss") + " " + JsonConvert.SerializeObject(item));
             }
-            return null;
         }
-
         void SetRound(RoundModel round)
         {
             RnRsMap[round.RoomId] = round;

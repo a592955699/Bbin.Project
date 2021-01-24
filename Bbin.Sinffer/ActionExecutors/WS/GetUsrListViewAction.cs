@@ -6,9 +6,9 @@ namespace Bbin.SnifferActionExecutors
 {
     public class GetUsrListViewAction : AbstractWsActionExecutor
     {
-        public override object DoExecute(params object[] paras)
+        public override void Execute(params object[] args)
         {
-            return null;
+
         }
     }
 }

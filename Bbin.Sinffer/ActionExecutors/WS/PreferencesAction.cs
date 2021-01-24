@@ -6,9 +6,8 @@ namespace Bbin.SnifferActionExecutors
 {
     public class PreferencesAction : AbstractWsActionExecutor
     {
-        public override object DoExecute(params object[] paras)
+        public override void Execute(params object[] paras)
         {
-            return null;
         }
     }
 }

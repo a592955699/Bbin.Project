@@ -73,7 +73,7 @@
 
 </style>
 <div class="row">
-    <dl class="rooms">
+    <dl class="rooms" style="display:none;">
         @foreach (var item in Model)
         {
         <dd>
@@ -88,8 +88,8 @@
     {
     <dd class="col-room" id="room_@item.Key">
         <div class="title"><span class="roomName">@item.Value</span>&nbsp;&nbsp;<b><span class="roomIndex"></span></b>&nbsp;&nbsp;<span class="roomDate"></span></div>
-        <div class="number"></div>
-        <div class="result"></div>
+        <div class="number">loading...</div>
+        <div class="result">loading...</div>
         <div class="recommend"></div>
         <div class="clear"></div>
     </dd>

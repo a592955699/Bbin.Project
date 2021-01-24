@@ -7,18 +7,9 @@ namespace Bbin.SnifferActionExecutors
 {
     public class GetRoMapAction : AbstractWsActionExecutor
     {
-        ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(GetRoMapAction));
-        public override object DoExecute(params object[] paras)
+        public override void Execute(params object[] args)
         {
-            object runError = string.Empty;
-            if (Data.TryGetValue("runEor", out runError))
-            {
-                if (runError.ToString() == "IDLE_10M")
-                {
-                    log.Info("【提示】"+WebSocketColseCodes.ActivityIDLE_10M);
-                }
-            }
-            return null;
+            
         }
     }
 }

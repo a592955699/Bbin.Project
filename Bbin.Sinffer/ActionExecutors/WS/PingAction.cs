@@ -7,11 +7,10 @@ namespace Bbin.SnifferActionExecutors
 {
     public class PingAction : AbstractWsActionExecutor
     {
-        public override object DoExecute(params object[] paras)
+        public override void Execute(params object[] paras)
         {
             var jsonString = JsonConvert.SerializeObject(Data);
             SocketService.Send(jsonString);
-            return null;
         }
     }
 }

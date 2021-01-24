@@ -18,5 +18,9 @@ namespace Bbin.Sniffer.Cons
         /// 传输内容超过10M
         /// </summary>
         public const ushort ActivityIDLE_10M = 3002;
+        /// <summary>
+        /// 传输内容超过5M
+        /// </summary>
+        public const ushort ActivityIDLE_5M = 3003;
     }
 }

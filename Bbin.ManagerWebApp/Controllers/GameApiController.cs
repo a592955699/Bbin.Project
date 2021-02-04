@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bbin.Core;
 using Bbin.Core.Extensions;
 using Bbin.Core.Models.UI;
 using Bbin.Data;
 using Bbin.Manager;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Bbin.ManagerWebApp.Controllers
 {
@@ -78,5 +81,7 @@ namespace Bbin.ManagerWebApp.Controllers
             var resultModel = game.ToGameResultModel(results);
             return new JsonResult(resultModel);
         }
+
+        
     }
 }

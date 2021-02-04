@@ -9,38 +9,39 @@
     <hr />
     @Html.ActionLink("上一靴", "PreResult", new { gameId = Model.GameId, roomId = Model.RoomId })
     @Html.ActionLink("下一靴", "NextResult", new { gameId = Model.GameId, roomId = Model.RoomId })
-<dl class="row">
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.GameId)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.GameId)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.Index)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.Index)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.RoomId)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.RoomId)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.RoomName)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.RoomName)
-    </dd>
-    <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.Date)
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.Date)
-    </dd>
-</dl>
+    @Html.ActionLink("统计概率", "StatisticalRate", new { gameId = Model.GameId},new { target = "_blank" })
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GameId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GameId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Index)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Index)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoomId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoomName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+    </dl>
 </div>
 <hr />
 <div class="row">

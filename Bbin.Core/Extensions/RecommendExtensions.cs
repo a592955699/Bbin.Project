@@ -34,22 +34,22 @@ namespace Bbin.Core.Extensions
             for (int i = 1; i <= resultIndex; i++)
             {
                 //获取最后一列
-                lastCol = colResults[colResults.Count - 1];   
+                lastCol = colResults[colResults.Count - 1];
 
                 //数据库没有，默认为 ResultState.UnKnown
-                var tempResult = results.FirstOrDefault(x => x.Index == i );
+                var tempResult = results.FirstOrDefault(x => x.Index == i);
                 tempState = tempResult == null ? ResultState.UnKnown : tempResult.ResultState;
                 if (lastCol.Any())//最后一列有结果，且最后一个结果 State ！= tempState,新增列
                 {
                     lastColState = lastCol[lastCol.Count - 1];
                     if (tempState == ResultState.He)//当前号码是和，则直接往列里面添加
                     {
-                   
+
                     }
                     else if (lastColState == ResultState.He)//上个号码是和，则取最后一个不是和 lastColState
                     {
                         lastColState = lastCol.LastOrDefault(x => x != ResultState.He);
-                        if(lastColState!=tempState)//lastColState 和 tempState 不一致，则开新列
+                        if (lastColState != tempState)//lastColState 和 tempState 不一致，则开新列
                         {
                             colResults.Add(new List<ResultState>());
                             lastCol = colResults[colResults.Count - 1];
@@ -84,7 +84,7 @@ namespace Bbin.Core.Extensions
         /// <param name="recommendTemplate">好路推荐模板设置</param>
         /// <param name="result">当前结果，用于计算没有采集到结果的时候，匹配 UnKnow</param>
         /// <returns></returns>
-        public static bool IsRecommend(this List<ResultEntity> resultEntities, RecommendTemplateModel recommendTemplate,int resultIndex)
+        public static bool IsRecommend(this List<ResultEntity> resultEntities, RecommendTemplateModel recommendTemplate, int resultIndex)
         {
             if (recommendTemplate == null || recommendTemplate.Items == null || recommendTemplate.Items.Count == 0)
                 return false;
@@ -103,9 +103,9 @@ namespace Bbin.Core.Extensions
             }
 
             //最后一列
-            List<ResultState> lastCol= colResults[colResults.Count-1];
+            List<ResultState> lastCol = colResults[colResults.Count - 1];
             //最后一个结果状态
-            ResultState lastColState= lastCol[lastCol.Count-1];
+            ResultState lastColState = lastCol[lastCol.Count - 1];
 
             RecommendItemEntity lastRecommendItem;
             //特殊处理长龙
@@ -126,7 +126,7 @@ namespace Bbin.Core.Extensions
 
                 //去除和了后，如果没数据，则跳过
                 var tempCol = lastCol.Where(x => x != ResultState.He).ToList();
-                if(!tempCol.Any())
+                if (!tempCol.Any())
                 {
                     continue;
                 }
@@ -176,12 +176,12 @@ namespace Bbin.Core.Extensions
             return true;
         }
         /// <summary>
-        /// 推荐下注设置
+        /// 根据推荐设置计算推荐结果
         /// </summary>
         /// <param name="recommendTemplate"></param>
         /// <param name="betState"></param>
         /// <returns></returns>
-        public static bool IsRecommendBet(this RecommendTemplateModel recommendTemplate,out ResultState betState)
+        public static bool IsRecommendBet(this RecommendTemplateModel recommendTemplate, out ResultState betState)
         {
             betState = ResultState.UnKnown;
             if (recommendTemplate.Items == null || recommendTemplate.Items.Count == 0)
@@ -199,22 +199,89 @@ namespace Bbin.Core.Extensions
             }
             return true;
         }
-
-        public static List<RecommendTemplateModel> ToRecommendTemplateModel(List<RecommendTemplateEntity> recommendTemplates,List<RecommendItemEntity> recommendItems)
+        /// <summary>
+        /// 类型转换
+        /// </summary>
+        /// <param name="recommendTemplates"></param>
+        /// <param name="recommendItems"></param>
+        /// <returns></returns>
+        public static List<RecommendTemplateModel> ToRecommendTemplateModel(List<RecommendTemplateEntity> recommendTemplates, List<RecommendItemEntity> recommendItems)
         {
-            
+
             List<RecommendTemplateModel> recommendTemplateModels = new List<RecommendTemplateModel>();
             if (recommendTemplates == null || recommendItems == null)
                 return recommendTemplateModels;
             foreach (var template in recommendTemplates)
             {
                 var items = recommendItems.Where(x => x.RecommendTemplateId == template.Id).OrderBy(x => x.Id).ToList();
-                if(items.Any())
+                if (items.Any())
                 {
-                    recommendTemplateModels.Add(new RecommendTemplateModel(template,items));
+                    recommendTemplateModels.Add(new RecommendTemplateModel(template, items));
                 }
             }
             return recommendTemplateModels;
+        }
+
+        /// <summary>
+        /// 统计预测结果
+        /// </summary>
+        /// <param name="resultEntities"></param>
+        /// <param name="recommendTemplates"></param>
+        /// <returns></returns>
+        public static List<RecommendBetModel> StatisticalProbability(this List<ResultEntity> resultEntities, List<RecommendTemplateModel> recommendTemplates, int reTryTimes = 2)
+        {
+            List<RecommendBetModel> recommendBets = new List<RecommendBetModel>();
+
+            List<ResultEntity> tempList;
+
+            var maxIndex = resultEntities.Max(x => x.Index);
+            bool recommend = false;
+            ResultState betState;//推荐结果
+            ResultState resultState;//实际结果
+            string recommendTemplateName;
+            for (int i = 1; i <= maxIndex; i++)
+            {
+                var current = resultEntities.FirstOrDefault(x => x.Index == i);
+                if (current == null)
+                    continue;
+
+                recommend = false;
+                resultState = current.ResultState;
+                betState = ResultState.UnKnown;
+                recommendTemplateName = "";
+
+                foreach (RecommendTemplateModel recommendTemplate in recommendTemplates)
+                {
+                    tempList = resultEntities.Where(x => x.Index < i).ToList();
+                    if (tempList.IsRecommend(recommendTemplate, i - 1))
+                    {
+                        if (recommendTemplate.IsRecommendBet(out betState))
+                        {
+                            recommendTemplateName = recommendTemplate.Template.Name;
+                            recommend = true;
+                            resultState = resultEntities.FirstOrDefault(x => x.Index == i).ResultState;
+                            break;
+                        }
+                    }
+                }
+
+                if (recommend)
+                {
+                    var historyBets = recommendBets.Where(x => x.Index >= i - reTryTimes && x.Index < i);
+                    if(historyBets.Count()< reTryTimes)
+                    {
+                        recommendBets.Add(new RecommendBetModel()
+                        {
+                            Index = i,
+                            RecommendState = betState,
+                            ResultState = resultState,
+                            RecommendTemplateName = recommendTemplateName
+                        });
+                        continue;
+                    }
+                }
+            }
+            return recommendBets;
         }
     }
 }

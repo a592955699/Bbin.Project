@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bbin.Core;
 using Bbin.Core.Extensions;
 using Bbin.Data;
 using Bbin.Manager;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Webdiyer.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
@@ -69,6 +71,25 @@ namespace Bbin.ManagerWebApp.Controllers
             var game = _gameDbService.FindPre(gameId, roomId);
             if (game == null) return new JsonResult("找不到对应的Game");
             return RedirectToAction("Details", new { id= game.GameId });
+        }
+
+        public IActionResult StatisticalRate(int gameId)
+        {
+            var game = _gameDbService.FindById(gameId);
+            if (game == null) return new JsonResult(null);
+
+            var results = _resultDbService.FindList(gameId);
+
+            var managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
+            var recommendBets = results.StatisticalProbability(managerApplicationContext.RecommendTemplateModels);
+            var total = recommendBets.Count();
+            var win = recommendBets.Where(x => x.RecommendState == x.ResultState).Count();
+            var he = recommendBets.Where(x => x.RecommendState != x.ResultState && x.ResultState == Core.Enums.ResultState.He).Count();
+            var lose = recommendBets.Where(x => x.RecommendState != x.ResultState && x.ResultState != Core.Enums.ResultState.He).Count();
+            double rate = 0;
+            if (total != 0)
+                rate = win / (double)total * 100;
+            return new JsonResult(new { Detail = recommendBets, Total = total, Win = win, Lose = lose, He = he, Rate = rate.ToString("f2") });
         }
     }
 }

@@ -9,7 +9,7 @@
     <hr />
     @Html.ActionLink("上一靴", "PreResult", new { gameId = Model.GameId, roomId = Model.RoomId })
     @Html.ActionLink("下一靴", "NextResult", new { gameId = Model.GameId, roomId = Model.RoomId })
-    @Html.ActionLink("统计概率", "StatisticalRate", new { gameId = Model.GameId},new { target = "_blank" })
+    @Html.ActionLink("统计概率", "StatisticalRate", new { gameId = Model.GameId }, new { target = "_blank" })
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.GameId)
@@ -41,6 +41,9 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Date)
         </dd>
+        <dd>
+            <div id="rate"></div>
+        </dd>
     </dl>
 </div>
 <hr />
@@ -48,7 +51,7 @@
     <div class="result-number">
         @foreach (var item in Model.NumberResults)
         {
-            <div class="cell state-@(item.ResultState)" title="顺序:@(item.Index)">@item.Number</div>
+            <div class="cell state-@(item.ResultState)" title="顺序:@(item.Index)">@(item.ResultState!=Bbin.Core.Enums.ResultState.UnKnown? item.Number.ToString():"")</div>
         }
     </div>
 </div>
@@ -59,7 +62,7 @@
         {
             @foreach (var state in columns)
             {
-                <div class="cell state-@(state)" ></div>
+                <div class="cell state-@(state)"></div>
             }
 
             if (columns.Count % 6 > 0)
@@ -75,7 +78,7 @@
     </div>
 </div>
 <style>
-    .result-number{
+    .result-number {
         width: 100%;
         height: 182px;
         border: 1px solid black;
@@ -85,7 +88,7 @@
         overflow-x: auto;
     }
 
-     .result-col {
+    .result-col {
         width: 100%;
         height: 199px;
         border: 1px solid black;
@@ -95,38 +98,101 @@
         overflow-x: auto;
     }
 
-        .result-number .cell {
-            text-align: center;
-            border: 1px solid black;
-            display: block;
-            float: left;
-            width: 30px;
-            height: 30px;
-            margin: 0px;
-            writing-mode: horizontal-tb;
-        }
+    .result-number .cell {
+        text-align: center;
+        border: 1px solid black;
+        display: block;
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin: 0px;
+        writing-mode: horizontal-tb;
+    }
 
-        .result-col .cell {
-            text-align: center;
-            border: 1px solid black;
-            display: block;
-            float: left;
-            width: 30px;
-            height: 30px;
-            margin: 0px;
-            writing-mode: horizontal-tb;
-        }
+    .result-col .cell {
+        text-align: center;
+        border: 1px solid black;
+        display: block;
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin: 0px;
+        writing-mode: horizontal-tb;
+    }
 
-        .result-number .state-ZhuangJia, .result-col .state-ZhuangJia {
-            background-color: darkred;
-            color: white;
-        }
+    .result-number .state-ZhuangJia, .result-col .state-ZhuangJia {
+        background-color: darkred;
+        /*color: white;*/
+    }
 
-        .result-number .state-He, .result-col .state-He {
-            background-color: chartreuse;
-        }
+    .result-number .state-He, .result-col .state-He {
+        background-color: chartreuse;
+    }
 
-        .result-number .state-XianJia, .result-col .state-XianJia {
-            background-color: cadetblue;
-        }
+    .result-number .state-XianJia, .result-col .state-XianJia {
+        background-color: cadetblue;
+    }
+
+    .result-number .win {
+        color:white;
+        font-weight:bold;
+    }
+
+    .result-number .lose {
+        color: white;
+        font-weight: bold;
+        text-decoration: line-through;
+    }
+
+    .result-number .he {
+        color: white;
+        font-weight: bold;
+    }
 </style>
+@section Scripts
+{
+    <script>
+        function getResultStateText(resultState) {
+            switch (resultState) {
+                case 3:
+                    return "庄";
+                case 2:
+                    return "和";
+                case 1:
+                    return "闲";
+                default:
+                    return "";
+            }
+        }
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "../StatisticalRate?gameid=@Model.GameId",
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        for (var i = 0; i < data.Detail.length; i++) {
+                            var item = data.Detail[i];
+                            var cell = $(".result-number").find(".cell").eq(item.Index - 1);
+
+                            cell.attr("title", "推荐模板:" + item.RecommendTemplateName + " 推荐:" + getResultStateText(item.RecommendState));
+                            if (item.RecommendState == item.ResultState) {
+                                cell.text("赢");
+                                cell.addClass("win");
+                            }
+                            else if (item.ResultState == 2) {
+                                cell.text("和");
+                                cell.addClass("he");
+                            }
+                            else {
+                                cell.text("输");
+                                cell.addClass("lose");
+                            }
+                        }
+                        $("#rate").html("输:" + data.Lose + "&nbsp;&nbsp;&nbsp;&nbsp;赢:" + data.Win + "&nbsp;&nbsp;&nbsp;&nbsp;和:" + data.He + "&nbsp;&nbsp;&nbsp;&nbsp;赢面:" + data.Rate+"%");
+                    }
+                }
+            });
+        });
+    </script>
+}

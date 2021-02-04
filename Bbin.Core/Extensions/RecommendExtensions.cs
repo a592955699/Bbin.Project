@@ -10,12 +10,19 @@ namespace Bbin.Core.Extensions
 {
     public static class RecommendExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resultEntities">按照 Index 排序后的结果</param>
+        /// <param name="resultIndex"></param>
+        /// <returns></returns>
         public static List<List<ResultState>> ToColumnResults(this List<ResultEntity> resultEntities, int resultIndex)
         {
             if (resultEntities == null || !resultEntities.Any())
                 return new List<List<ResultState>>();
 
-            var results = resultEntities.OrderBy(x => x.Index).ToList();
+            //var results = resultEntities.OrderBy(x => x.Index).ToList();
+            var results = resultEntities;
             var result = resultEntities[resultEntities.Count - 1];
             #region 按照结果顺序，不同颜色单独放一列
             //最后一列
@@ -81,7 +88,7 @@ namespace Bbin.Core.Extensions
         /// 好路推荐
         /// </summary>
         /// <param name="resultEntities">结果集合</param>
-        /// <param name="recommendTemplate">好路推荐模板设置</param>
+        /// <param name="recommendTemplate">好路推荐模板设置,需要排序好</param>
         /// <param name="result">当前结果，用于计算没有采集到结果的时候，匹配 UnKnow</param>
         /// <returns></returns>
         public static bool IsRecommend(this List<ResultEntity> resultEntities, RecommendTemplateModel recommendTemplate, int resultIndex)
@@ -93,7 +100,8 @@ namespace Bbin.Core.Extensions
                 return false;
 
             //升序处理
-            var items = recommendTemplate.Items.OrderBy(x => x.Id).ToList();
+            //var items = recommendTemplate.Items.OrderBy(x => x.Id).ToList();
+            var items = recommendTemplate.Items;
 
             var colResults = resultEntities.ToColumnResults(resultIndex);
             //没结果列，则返回 false
@@ -114,7 +122,7 @@ namespace Bbin.Core.Extensions
                 lastRecommendItem = recommendTemplate.Items.FirstOrDefault();
                 lastCol = colResults[colResults.Count - 1];
                 lastColState = lastCol[lastCol.Count - 1];
-                return lastCol.Count >= lastRecommendItem.Times && lastColState == lastRecommendItem.ResultState;
+                return lastCol.Where(x => x != ResultState.He).Count() >= lastRecommendItem.Times && lastColState == lastRecommendItem.ResultState;
             }
 
             int colSkip = 0;
@@ -179,7 +187,7 @@ namespace Bbin.Core.Extensions
         /// 根据推荐设置计算推荐结果
         /// 注意：需要调用 IsRecommend 判断是否推荐
         /// </summary>
-        /// <param name="recommendTemplate"></param>
+        /// <param name="recommendTemplate">需要先排序好</param>
         /// <param name="betState"></param>
         /// <returns></returns>
         public static bool IsRecommendBet(this RecommendTemplateModel recommendTemplate, out ResultState betState)
@@ -187,7 +195,8 @@ namespace Bbin.Core.Extensions
             betState = ResultState.UnKnown;
             if (recommendTemplate.Items == null || recommendTemplate.Items.Count == 0)
                 return false;
-            var first = recommendTemplate.Items.OrderBy(x => x.Id).FirstOrDefault();
+            //var first = recommendTemplate.Items.OrderBy(x => x.Id).FirstOrDefault();
+            var first = recommendTemplate.Items.FirstOrDefault();
             if (first.ResultState == ResultState.UnKnown || first.ResultState == ResultState.He)
                 return false;
             if (recommendTemplate.Template.RecommendType == RecommendTypeEnum.Break)
@@ -223,7 +232,13 @@ namespace Bbin.Core.Extensions
             return recommendTemplateModels;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resultEntities">按照 Index 升序排列的 list</param>
+        /// <param name="recommendTemplates">排序好的结果</param>
+        /// <param name="reTryTimes"></param>
+        /// <returns></returns>
         public static List<RecommendBetModel> StatisticalProbability(this List<ResultEntity> resultEntities, List<RecommendTemplateModel> recommendTemplates, int reTryTimes = 2)
         {
             //通过风险控制设置计算的推荐结果
@@ -234,7 +249,7 @@ namespace Bbin.Core.Extensions
             var maxIndex = resultEntities.Max(x => x.Index);
             ResultState recommendState;
             ResultState resultState;
-            string recommendName="";
+            string recommendName = "";
             bool isNoRiskBet;
             bool isRiskBet;
             RecommendItem preNoRiskRecommend;
@@ -262,8 +277,9 @@ namespace Bbin.Core.Extensions
                         });
                         recommendName = recommendTemplate.Template.Name;
                         isNoRiskBet = true;
+                        break;
                     }
-                } 
+                }
                 #endregion
                 //没有符合条件的推荐规则，直接退出循环，进入下一个号码
                 if (!isNoRiskBet)
@@ -272,7 +288,7 @@ namespace Bbin.Core.Extensions
                 }
                 #region 有符合好路推荐的数据，根据风险设置，计算是否下注
                 //不够重复次数的好路推荐推荐，直接推荐下注
-                if(index<reTryTimes)
+                if (index < reTryTimes)
                 {
                     isRiskBet = true;
                 }
@@ -289,7 +305,7 @@ namespace Bbin.Core.Extensions
                     */
                     //当前好路推荐规则和上一个的好路推荐规则不一致，直接推荐下注
                     preNoRiskRecommend = noRiskRecommendBets.FirstOrDefault(x => x.Index == index - 1);
-                    if (preNoRiskRecommend == null || (preNoRiskRecommend.RecommendState == recommendState && preNoRiskRecommend.RecommendTemplateName == recommendName))
+                    if (preNoRiskRecommend == null || (preNoRiskRecommend.RecommendState != recommendState || preNoRiskRecommend.RecommendTemplateName != recommendName))
                     {
                         isRiskBet = true;
                     }
@@ -303,7 +319,7 @@ namespace Bbin.Core.Extensions
                         for (int tempIndex = index - 2; tempIndex > 0; tempIndex--)
                         {
                             var tempPreNoRisk = noRiskRecommendBets.FirstOrDefault(x => x.Index == tempIndex);
-                            if(tempPreNoRisk == null || tempPreNoRisk.RecommendState!= preNoRiskRecommend.RecommendState|| tempPreNoRisk.RecommendTemplateName!= preNoRiskRecommend.RecommendTemplateName)
+                            if (tempPreNoRisk == null || tempPreNoRisk.RecommendState != preNoRiskRecommend.RecommendState || tempPreNoRisk.RecommendTemplateName != preNoRiskRecommend.RecommendTemplateName)
                             {
                                 break;
                             }
@@ -312,7 +328,7 @@ namespace Bbin.Core.Extensions
 
                         //计算连续结果之内下注的次数
                         var tempCount = tempNearNoRiskRecommends.Count(x => riskRecommendBets.Any(z => z.Index == x.Index));
-                        if(tempCount<reTryTimes)
+                        if (tempCount < reTryTimes)
                         {
                             isRiskBet = true;
                         }
@@ -320,201 +336,24 @@ namespace Bbin.Core.Extensions
                 }
 
                 #endregion
-                if(isRiskBet)
+                if (isRiskBet)
                 {
                     var current = resultEntities.FirstOrDefault(x => x.Index == index);
-                    riskRecommendBets.Add(new RecommendBetModel()
+                    if (current != null)
                     {
-                        Index = current.Index,
-                        RecommendState = recommendState,
-                        RecommendTemplateName = recommendName,
-                        ResultState = current.ResultState
-                    });
+                        riskRecommendBets.Add(new RecommendBetModel()
+                        {
+                            Index = current.Index,
+                            RecommendState = recommendState,
+                            RecommendTemplateName = recommendName,
+                            ResultState = current.ResultState
+                        });
+                    }
                 }
                 #endregion
             }
             return riskRecommendBets;
         }
 
-        ///// <summary>
-        ///// 统计预测结果
-        ///// </summary>
-        ///// <param name="resultEntities"></param>
-        ///// <param name="recommendTemplates"></param>
-        ///// <returns></returns>
-        //public static List<RecommendBetModel> StatisticalProbability(this List<ResultEntity> resultEntities, List<RecommendTemplateModel> recommendTemplates, int reTryTimes = 2)
-        //{
-        //    List<RecommendBetModel> recommendBets = new List<RecommendBetModel>();
-
-        //    List<ResultEntity> tempList;
-
-        //    var maxIndex = resultEntities.Max(x => x.Index);
-        //    bool recommend = false;
-        //    ResultState betState;//推荐结果
-        //    ResultState resultState;//实际结果
-        //    string recommendTemplateName;
-        //    for (int i = 1; i <= maxIndex; i++)
-        //    {
-        //        var current = resultEntities.FirstOrDefault(x => x.Index == i);
-        //        if (current == null)
-        //            continue;
-
-        //        recommend = false;
-        //        resultState = current.ResultState;
-        //        betState = ResultState.UnKnown;
-        //        recommendTemplateName = "";
-
-        //        foreach (RecommendTemplateModel recommendTemplate in recommendTemplates)
-        //        {
-        //            tempList = resultEntities.Where(x => x.Index < i).ToList();
-        //            if (tempList.IsRecommend(recommendTemplate, i - 1))
-        //            {
-        //                if (recommendTemplate.IsRecommendBet(out betState))
-        //                {
-        //                    recommendTemplateName = recommendTemplate.Template.Name;
-        //                    recommend = true;
-        //                    resultState = resultEntities.FirstOrDefault(x => x.Index == i).ResultState;
-        //                    break;
-        //                }
-        //            }
-        //        }
-
-        //        if (recommend)
-        //        {
-        //            var historyBets = recommendBets.Where(x => x.Index >= i - reTryTimes && x.Index < i);
-        //            if (historyBets.Count() < reTryTimes)
-        //            {
-        //                recommendBets.Add(new RecommendBetModel()
-        //                {
-        //                    Index = i,
-        //                    RecommendState = betState,
-        //                    ResultState = resultState,
-        //                    RecommendTemplateName = recommendTemplateName
-        //                });
-        //                continue;
-        //            }
-        //        }
-        //    }
-        //    return recommendBets;
-        //}
-
-        ///// <summary>
-        ///// 统计推荐结果，不考虑风险控制策略
-        ///// </summary>
-        ///// <param name="resultEntities"></param>
-        ///// <param name="recommendTemplates"></param>
-        ///// <returns></returns>
-        //private static List<RecommendItem> StatisticalRecommend(this List<ResultEntity> resultEntities, List<RecommendTemplateModel> recommendTemplates)
-        //{
-        //    //推荐号码，不管风险控制策略
-        //    List<RecommendItem> recommends = new List<RecommendItem>();
-
-        //    List<ResultEntity> tempList;
-
-        //    var maxIndex = resultEntities.Max(x => x.Index);
-        //    bool recommend = false;
-        //    ResultState betState;//推荐结果
-        //    ResultState resultState;//实际结果
-        //    string recommendTemplateName;
-        //    for (int i = 1; i <= maxIndex; i++)
-        //    {
-        //        var current = resultEntities.FirstOrDefault(x => x.Index == i);
-        //        if (current == null)
-        //            continue;
-
-        //        recommend = false;
-        //        resultState = current.ResultState;
-        //        betState = ResultState.UnKnown;
-        //        recommendTemplateName = "";
-
-        //        foreach (RecommendTemplateModel recommendTemplate in recommendTemplates)
-        //        {
-        //            tempList = resultEntities.Where(x => x.Index < i).ToList();
-        //            if (tempList.IsRecommend(recommendTemplate, i - 1))
-        //            {
-        //                if (recommendTemplate.IsRecommendBet(out betState))
-        //                {
-        //                    recommendTemplateName = recommendTemplate.Template.Name;
-        //                    recommend = true;
-        //                    resultState = resultEntities.FirstOrDefault(x => x.Index == i).ResultState;
-        //                    break;
-        //                }
-        //            }
-        //        }
-
-        //        if (recommend)
-        //        {
-        //            recommends.Add(new RecommendBetModel()
-        //            {
-        //                Index = i,
-        //                RecommendState = betState,
-        //                RecommendTemplateName = recommendTemplateName
-        //            });
-        //            continue;
-        //        }
-        //    }
-        //    return recommends;
-        //}
-
-        //public static List<RecommendBetModel>  StatisticalRecommendBet(this List<ResultEntity> resultEntities, List<RecommendTemplateModel> recommendTemplates,int reTryTimes =2)
-        //{
-        //    List<RecommendBetModel> recommendBets = new List<RecommendBetModel>();
-
-        //    //推荐结果，不考虑风险控制
-        //    var recommends = resultEntities.StatisticalRecommend(recommendTemplates).OrderBy(x=>x.Index);
-
-        //    //根据推荐结果和风险控制，重新计算推荐
-        //    foreach (var currentRecommend in recommends)
-        //    {
-        //        bool isRecommend = false;
-        //        var preRecommend = recommends.FirstOrDefault(x => x.Index == currentRecommend.Index - 1);
-        //        if (preRecommend==null)//上一个推荐没有结果，则直接推荐
-        //        {
-        //            isRecommend = true;
-        //        }
-        //        //上一个推荐和本次推荐规则一致，则判断下注次数是否超过 reTryTimes
-        //        else if (preRecommend.RecommendState == currentRecommend.RecommendState && preRecommend.RecommendTemplateName == currentRecommend.RecommendTemplateName)
-        //        {
-        //            var historyRecommends = new List<RecommendItem>();
-        //            historyRecommends.Add(preRecommend);
-        //            for (int i = preRecommend.Index-1; i>0 ; i--)
-        //            {
-        //                var tempRecommend = recommends.FirstOrDefault(x => x.Index == i);
-        //                if (tempRecommend == null)
-        //                {
-        //                    break;
-        //                }
-        //                if(tempRecommend.RecommendState!=currentRecommend.RecommendState || tempRecommend.RecommendTemplateName!=currentRecommend.RecommendTemplateName)
-        //                {
-        //                    break;
-        //                }
-        //                historyRecommends.Add(tempRecommend);
-        //            }
-        //            var totalReTryTimes = recommendBets.Where(x => historyRecommends.Any(z => z.Index == x.Index)).Count();
-        //            if(totalReTryTimes<=reTryTimes)
-        //            {
-        //                isRecommend = true;
-        //            }
-        //        }
-        //        else//上一推荐和本次推荐不一致，则直接推荐
-        //        {
-        //            isRecommend = true;
-        //        }
-
-        //        if(isRecommend)
-        //        {
-        //            var res = resultEntities.FirstOrDefault(x => x.Index == currentRecommend.Index);
-        //            recommendBets.Add(new RecommendBetModel()
-        //            {
-        //                Index = currentRecommend.Index,
-        //                RecommendState = currentRecommend.RecommendState,
-        //                RecommendTemplateName = currentRecommend.RecommendTemplateName,
-        //                ResultState = res.ResultState
-        //            });
-        //        }
-        //    }
-
-        //    return recommendBets;
-        //}
     }
 }

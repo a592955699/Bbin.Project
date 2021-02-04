@@ -47,7 +47,7 @@ namespace Bbin.ManagerWebApp
 
             #if DEBUG
             services.AddDbContext<BbinDbContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("BbinDbContext")
+               options.UseMySQL(Configuration.GetConnectionString("BbinDbContext")
                , b => b.MigrationsAssembly("Bbin.ResultConsoleApp"))
             );
             #else

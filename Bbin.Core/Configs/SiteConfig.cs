@@ -9,9 +9,9 @@ namespace Bbin.Core.Configs
         /// <summary>
         /// 主域名,请以 ‘/’ 结尾
         /// </summary>
-        public string Domain = "https://www.8876835.com/";
-        public string UserName { get; set; } = "hujunmin";
-        public string PassWord { get; set; } = "a123456";
+        public string Domain = "http://www.800800s.com/";
+        public string UserName { get; set; } = "hujunmin0";
+        public string PassWord { get; set; } = "hujunmin01";
         /// <summary>
         /// 验证码重试次数
         /// </summary>

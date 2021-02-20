@@ -108,7 +108,8 @@ namespace Bbin.SnifferConsoleApp
             services.AddSingleton(hostContext.Configuration.GetSection("BbinConfig").Get<BbinConfig>());
             services.AddSingleton(hostContext.Configuration.GetSection("SiteConfig").Get<SiteConfig>());
 
-            services.AddSingleton<AbstractLoginService, YongLiLoginService>();
+            //services.AddSingleton<AbstractLoginService, YongLiLoginService>();
+            services.AddSingleton<AbstractLoginService, YongLi2LoginService>();
             services.AddSingleton<IMQService, RabbitMQService>();
             services.AddSingleton<ISocketService, SocketService>();
             services.AddSingleton<ISnifferService, SnifferService>();

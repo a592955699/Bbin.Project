@@ -11,32 +11,39 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Webdiyer.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
+using Bbin.Core.Entitys;
+using Bbin.Core.Models;
+using System.Collections.Concurrent;
+using Bbin.Manager.Rate;
 
 namespace Bbin.ManagerWebApp.Controllers
 {
     public class GameController : Controller
     {
 
-        private readonly ILogger<GameApiController> _logger;
+        private readonly ILogger<GameController> _logger;
+        private readonly RateQueue _rateQueue;
 
         private readonly ManagerApplicationContext _managerApplicationContext;
 
         private readonly IGameDbService _gameDbService;
         private readonly IResultDbService _resultDbService;
 
-        public GameController(ILogger<GameApiController> logger, ManagerApplicationContext managerApplicationContext,
+        public GameController(ILogger<GameController> logger, ManagerApplicationContext managerApplicationContext,
             IGameDbService gameDbService,
-            IResultDbService resultDbService)
+            IResultDbService resultDbService,
+            RateQueue rateQueue)
         {
             _logger = logger;
             _managerApplicationContext = managerApplicationContext;
             _gameDbService = gameDbService;
             _resultDbService = resultDbService;
+            _rateQueue = rateQueue;
         }
 
         public IActionResult Index(int pageIndex = 1, int pageSize = 10)
         {
-            var list = _gameDbService.FindList(pageIndex, pageSize);
+            var list = _gameDbService.FindList(pageIndex: pageIndex, pageSize: pageSize);
 
             return View(list);
         }
@@ -90,6 +97,21 @@ namespace Bbin.ManagerWebApp.Controllers
             if (total != 0)
                 rate = win / (double)total * 100;
             return new JsonResult(new { Detail = recommendBets, Total = total, Win = win, Lose = lose, He = he, Rate = rate.ToString("f2") });
+        }
+        public IActionResult StatisticalRateByDate()
+        {
+            var managerApplicationContext = ApplicationContext.ServiceProvider.GetService<ManagerApplicationContext>();
+            RateRequest request = new RateRequest() { 
+                Id=Guid.NewGuid().ToString(),
+                Name="测试",
+                Start=DateTime.Now.AddDays(-1),
+                End=DateTime.Now,
+                RecommendTemplateModels = managerApplicationContext.RecommendTemplateModels
+            };
+
+            var result = _rateQueue.TryAdd(request);
+
+            return new JsonResult("加入处理队列："+ result);
         }
     }
 }

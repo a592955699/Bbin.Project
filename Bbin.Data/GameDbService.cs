@@ -53,11 +53,20 @@ namespace Bbin.Data
             return dbContext.Games.Where(x => x.GameId < gameId && x.RoomId == roomId).OrderByDescending(x => x.GameId).FirstOrDefault();
         }
 
-        public PagedList<GameEntity> FindList(int pageIndex = 1, int pageSize = 10)
+        public PagedList<GameEntity> FindList(DateTime? start = null, DateTime? end = null, int pageIndex = 1, int pageSize = 10)
         {
-            var query = dbContext.Games.OrderByDescending(x => x.GameId);
+            var query = dbContext.Games.AsQueryable();
+            if(start!=null && start!=DateTime.MinValue)
+            {
+                query = query.Where(x => start.Value>= x.DateTime);
+            }
+            if (end != null && end != DateTime.MinValue)
+            {
+                query = query.Where(x => x.DateTime <= end.Value);
+            }
+            query = query.OrderByDescending(x => x.GameId);
 
-            return dbContext.Games.OrderByDescending(x => x.GameId).ToPagedList(pageIndex,pageSize);
+            return query.ToPagedList(pageIndex,pageSize);
         }
     }
 }

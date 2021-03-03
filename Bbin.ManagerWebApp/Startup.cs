@@ -3,6 +3,7 @@ using Bbin.Core.Configs;
 using Bbin.Data;
 using Bbin.Manager;
 using Bbin.Manager.ActionExecutors;
+using Bbin.Manager.Rate;
 using Bbin.ManagerWebApp.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -60,6 +61,7 @@ namespace Bbin.ManagerWebApp
             services.AddScoped<IGameDbService, GameDbService>();
             services.AddScoped<IRecommendItemService, RecommendItemService>();
             services.AddScoped<IRecommendTemplateService, RecommendTemplateService>();
+            services.AddSingleton<RateQueue>();
 
             //全局配置Json序列化处理
             services.AddMvc().AddNewtonsoftJson(options =>

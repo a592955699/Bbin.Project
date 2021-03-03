@@ -23,6 +23,6 @@ namespace Bbin.Data
         /// <returns></returns>
         GameEntity FindLastGame(string roomId, string date);
 
-        PagedList<GameEntity> FindList(int pageIndex = 1, int pageSize = 10);
+        PagedList<GameEntity> FindList(DateTime? start = null, DateTime? end = null, int pageIndex = 1, int pageSize = 10);
     }
 }

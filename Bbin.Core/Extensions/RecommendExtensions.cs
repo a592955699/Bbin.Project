@@ -125,12 +125,13 @@ namespace Bbin.Core.Extensions
                 return lastCol.Where(x => x != ResultState.He).Count() >= lastRecommendItem.Times && lastColState == lastRecommendItem.ResultState;
             }
 
-            int colSkip = 0;
+            //int colSkip = 0;
             var match = true;
             //循环处理结果列集合，倒序匹配推荐模板
             for (int itemIndex = recommendTemplate.Items.Count - 1; itemIndex >= 0; itemIndex--)
             {
-                lastCol = colResults[colResults.Count - 1 - (colSkip++)];
+                //lastCol = colResults[colResults.Count - 1 - (colSkip++)];
+                lastCol = colResults[colResults.Count - 1];
 
                 //去除和了后，如果没数据，则跳过
                 var tempCol = lastCol.Where(x => x != ResultState.He).ToList();

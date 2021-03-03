@@ -13,16 +13,16 @@ docker exec -it 5959ebbd38e9 /bin/bash
 #后台运行 .net core 程序
 
 cd /data/bbin/Bbin.ManagerWebApp
-nohup dotnet Bbin.ManagerWebApp.dll > nohup.out &
+nohup dotnet /data/bbin/Bbin.ManagerWebApp/Bbin.ManagerWebApp.dll > nohup.out &
 
 cd /data/bbin/Bbin.ResultConsoleApp
-nohup dotnet Bbin.ResultConsoleApp.dll > nohup.out &
+nohup dotnet /data/bbin/Bbin.ResultConsoleApp/Bbin.ResultConsoleApp.dll > nohup.out &
 
 cd /data/bbin/Bbin.SnifferConsoleApp1
-nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
+nohup dotnet /data/bbin/Bbin.SnifferConsoleApp1/Bbin.SnifferConsoleApp.dll > nohup.out &
 
 cd /data/bbin/Bbin.SnifferConsoleApp2
-nohup dotnet Bbin.SnifferConsoleApp.dll > nohup.out &
+nohup dotnet /data/bbin/Bbin.SnifferConsoleApp2/Bbin.SnifferConsoleApp.dll > nohup.out &
 
 # 查看 .net core 程序清单
 ps aux|grep dotnet
@@ -44,4 +44,3 @@ set password for bbin="abc###123";
 
 4.给用户 bbin 赋予数据库 bbin 所有权限，并允许远程连接
 GRANT ALL ON bbin.* TO 'bbin'@'%';
-

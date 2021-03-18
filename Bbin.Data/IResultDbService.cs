@@ -7,10 +7,10 @@ namespace Bbin.Data
 {
     public interface IResultDbService
     {
-        ResultEntity findByRs(string rs);
+        ResultEntity FindByRs(string rs);
         bool Insert(ResultEntity result);
-        List<ResultEntity> findList(long gameId);
-        ResultEntity GetResult(string roomId, string date, int gameIndex, int index);
-
+        List<ResultEntity> FindList(long gameId);
+        ResultEntity FindResult(string roomId, string date, int gameIndex, int index);
+        ResultEntity FindLastResult(string roomId, string date, int gameIndex);
     }
 }

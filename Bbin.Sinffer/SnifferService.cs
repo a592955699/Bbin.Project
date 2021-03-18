@@ -52,8 +52,8 @@ namespace Bbin.Sniffer
                     bool loginState = LoginService.CheckAndLogin();
                     if (!loginState)
                     {
-                        log.Warn("【警告】账号认证失败，无法链接ws.等待10S后重试");
-                        Thread.Sleep(10000);
+                        log.Warn("【警告】账号认证失败，无法链接ws.等待1S后重试");
+                        Thread.Sleep(1000);
                     }
 
                     LoginService.InternalGetBbinSessionId();
@@ -62,8 +62,8 @@ namespace Bbin.Sniffer
                 }
                 catch (Exception ex)
                 {
-                    log.Warn("【警告】账号认证异常,等待10S后重试", ex);
-                    Thread.Sleep(10000);
+                    log.Warn("【警告】账号认证异常,等待1S后重试", ex);
+                    Thread.Sleep(1000);
                 }
             }
             while (Work);
@@ -103,7 +103,8 @@ namespace Bbin.Sniffer
         private void WebSocketWrap_OnStateChange(object sender, EventArgs e)
         {
             var eventArgs = (StateChangeEventArgs)e;
-            log.Debug($"【提示】状态改变 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs}  St:{eventArgs.St}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】状态改变 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs}  St:{eventArgs.St}");
         }
 
         private void WebSocketWrap_OnFullResult(object sender, EventArgs e)
@@ -116,24 +117,34 @@ namespace Bbin.Sniffer
             }
             log.Info($"【提示】采集全部结果 {eventArgs.Round.RoomId} Rn:{eventArgs.Round.Rn} Rs:{eventArgs.Round.Rs} Pk:{eventArgs.Round.Pk}");
             MQService.PublishRound(eventArgs.Round);
-            log.Info($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】MQ 发送消息 {JsonConvert.SerializeObject(eventArgs.Round)}");
         }
 
         private void WebSocketWrap_OnDealingResult(object sender, EventArgs e)
         {
             var eventArgs = (DealingResultEventArgs)e;
-            log.Debug($"【提示】发牌 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 部分结果 {eventArgs.Pk}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】发牌 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 部分结果 {eventArgs.Pk}");
         }
 
         private void WebSocketWrap_OnCd(object sender, EventArgs e)
         {
             var eventArgs = (CdEventArgs)e;
-            log.Debug($"【提示】倒计时 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 倒计时 {eventArgs.Cd}");
+            if (log.IsDebugEnabled)
+                log.Debug($"【提示】倒计时 {eventArgs.RoomId} Rn:{eventArgs.Rn} Rs:{eventArgs.Rs} 倒计时 {eventArgs.Cd}");
         }
 
         private void WebSocketWrap_OnClosed(object sender, EventArgs e)
         {
             var eventArgs = (CloseEventArgs)e;
+
+            //手动关闭
+            if (eventArgs.Code == WebSocketColseCodes.ManualShutdown)
+            {
+                log.Warn($"【警告】手动断开 ws 链接！");
+                return;
+            }
 
             //账号 SessionId 过期
             if (eventArgs.Code == WebSocketColseCodes.API_EC_ACC_SID_INVALID)
@@ -142,28 +153,28 @@ namespace Bbin.Sniffer
                 Start();
                 return;
             }
-            //手动关闭
-            if (eventArgs.Code == WebSocketColseCodes.ManualShutdown)
-            {
-                log.Warn($"【警告】手动断开 ws 链接！");
-                return;
-            }
             //网络不稳定
-            if (eventArgs.Code == (ushort)CloseStatusCode.Abnormal)
+            else if (eventArgs.Code == (ushort)CloseStatusCode.Abnormal)
             {
                 if ((++SocketService.ReConnectionTimes) % 5 == 0)
                 {
-                    log.Warn($"【警告】网络不稳定，重新次数过多，等待30秒！");
-                    Thread.Sleep(30 * 1000);
+                    log.Warn($"【警告】网络不稳定，重新次数过多，准备休眠 5S 后开始重新连接！");
+                    Thread.Sleep(5 * 1000);
                 }
-                log.Warn($"【警告】网络不稳定，开始重新连接！");
+                else
+                {
+                    log.Warn($"【警告】网络不稳定，准备开始重新连接！");
+                }
                 //自动重连
                 SocketService.Connect();
                 return;
             }
-            log.Warn($"【警告】已断开 ws 链接！Code:{eventArgs.Code} Reason:{eventArgs.Reason}，开始重新连接！");
-            //其他原因，自动重连
-            SocketService.Connect();
+            else
+            {
+                log.Warn($"【警告】已断开 ws 链接！Code:{eventArgs.Code} Reason:{eventArgs.Reason}，开始重新连接！");
+                //其他原因，自动重连
+                SocketService.Connect();
+            }
         }
         #endregion
     }

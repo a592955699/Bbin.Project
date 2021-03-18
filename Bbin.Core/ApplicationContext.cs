@@ -19,22 +19,6 @@ namespace Bbin.Core
         public static ILog Log { get; private set; }
 
         #region 方法
-        /// <summary>
-        /// 初始化应用程序配置文件
-        /// </summary>
-        /// <returns></returns>
-        public static void ConfigureAppsettingsJson()
-        {
-            //配置文件注册
-            Configuration = new ConfigurationBuilder()
-           .AddInMemoryCollection() //将配置文件的数据加载到内存中
-           .SetBasePath(Directory.GetCurrentDirectory()) //指定配置文件所在的目录
-           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) //指定加载的配置文件
-           .Build(); //编译成对象  
-
-            Console.WriteLine("************ appsettings.json 配置文件:" + Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"));
-        }
-
 
         /// <summary>
         /// 初始化Log4Net

@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Bbin.Core;
 using Bbin.Core.Cons;
 using Bbin.Manager;
 using log4net;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Bbin.ManagerWebApp
 {
@@ -18,9 +13,10 @@ namespace Bbin.ManagerWebApp
     {
         public static void Main(string[] args)
         {
+
             Console.WriteLine("欢迎使用 BBIN 数据采集测试工具(Bbin.Manager 端)!本程序只是做学习交流使用，请勿用于商业用途！");
             ApplicationContext.ConfigureLog4Net(false);
-            ApplicationContext.ConfigureAppsettingsJson();
+            //ApplicationContext.ConfigureAppsettingsJson();
             ApplicationContext.ConfigureEncodingProvider();
 
             var log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, Log4NetCons.Name);
@@ -44,7 +40,7 @@ namespace Bbin.ManagerWebApp
                 }
                 host.Run();
             }
-            host.Run();
+            //host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -52,6 +48,11 @@ namespace Bbin.ManagerWebApp
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+            .UseDefaultServiceProvider(options =>
+            {
+                options.ValidateScopes = false;
+            })
+            ;
     }
 }

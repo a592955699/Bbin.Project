@@ -64,8 +64,8 @@ namespace Bbin.Sniffer
                 //处理收到的数据并打印
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-
-                log.Warn($"【警告】侦听 exchange {RabbitMQCons.ManagerExchange}  Queue:{queueName}  收到消息 Body:{message}");
+                if (log.IsDebugEnabled)
+                    log.Debug($"【警告】侦听 exchange {RabbitMQCons.ManagerExchange}  Queue:{queueName}  收到消息 Body:{message}");
 
                 var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
                 if(queueModel == null)
@@ -77,8 +77,9 @@ namespace Bbin.Sniffer
                 IActionExecutor actionExecutor;
                 if(ActionExecutors.TryGetValue(queueModel.Key,out actionExecutor))
                 {
-                    log.Warn($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
-                    actionExecutor.DoExcute(queueModel.Data);
+                    if (log.IsDebugEnabled)
+                        log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
+                    actionExecutor.DoExecute(queueModel.Data);
                 }
                 else
                 {

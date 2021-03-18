@@ -20,7 +20,7 @@ namespace Bbin.Sniffer
 
         string cookieFileName = "cookie.txt";
         protected static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(AbstractLoginService));
-        public CookieContainer CookieContainer { get; private set; }
+        public CookieContainer CookieContainer { get; protected set; }
         public SiteConfig siteConfig;
         public string SessionId { get; protected set; }
         /// <summary>

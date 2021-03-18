@@ -1,14 +1,18 @@
 ﻿using Bbin.Core.Entitys;
+using Bbin.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Webdiyer.AspNetCore;
 
 namespace Bbin.Data
 {
     public interface IGameDbService
     {
-        GameEntity findById(long gameId);
-        GameEntity findByDateAndIndex(string date, int index);
+        GameEntity FindById(long gameId);
+        GameEntity FindByDateAndIndex(string roomId, string date, int index);
+        GameEntity FindNext(long gameId, string roomId);
+        GameEntity FindPre(long gameId, string roomId);
         bool Insert(GameEntity game);
 
         /// <summary>
@@ -17,6 +21,8 @@ namespace Bbin.Data
         /// <param name="roomId"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        GameEntity GetLastGame(string roomId, string date);
+        GameEntity FindLastGame(string roomId, string date);
+
+        PagedList<GameEntity> FindList(DateTime? start = null, DateTime? end = null, int pageIndex = 1, int pageSize = 10);
     }
 }

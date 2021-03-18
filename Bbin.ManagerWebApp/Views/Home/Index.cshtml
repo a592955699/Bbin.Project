@@ -1,67 +1,113 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Dictionary<string, string>
+@{
+    ViewData["Title"] = "Index";
 }
-@model IEnumerable<Bbin.Core.Commandargs.SnifferUpArgs>
+
+@*<h1>Index</h1>*@
+@section Scripts
+{
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/GameHub.js"></script>
+    <script>
+        var roomTables = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    </script>
+}
+<style>
+    .clear {
+        clear: both;
+    }
+
+    .row .rooms dd {
+        float: left;
+        min-width: 100px;
+    }
+
+    .row .col-room {
+        width: 363px;
+        height: 363px;
+        border: 1px solid red;
+        margin-right: 10px;
+    }
+
+        .row .col-room .title, .row .col-room .number, .row .col-room .result, .row .col-room .recommend {
+            width: 100%;
+        }
+            .row .col-room .recommend
+            {
+                height:23px;
+                background-color:darkgrey;
+                color:blue;
+            }
+
+            .row .col-room .result {
+                height: 122px;
+                margin-top: 10px;
+                border: 1px solid red;
+                writing-mode: vertical-lr;
+            }
+
+        .row .col-room .number {
+            height: 182px;
+            border: 1px solid red;
+            writing-mode: vertical-lr;
+        }
 
 
+            .row .col-room .number .cell {
+                text-align: center;
+                border: 1px solid black;
+                display: block;
+                float: left;
+                width: 30px;
+                height: 30px;
+                margin: 0px;
+                writing-mode: horizontal-tb;
+            }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.QueueName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PassWord)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Work)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Connected)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastDateTime)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+        .row .col-room .result .cell {
+            text-align: center;
+            border: 1px solid black;
+            display: block;
+            float: left;
+            width: 20px;
+            height: 20px;
+            margin: 0px;
+            writing-mode: horizontal-tb;
+        }
+
+        .row .col-room .state-1 {
+            background-color: cadetblue;
+        }
+
+        .row .col-room .state-2 {
+            background-color: chartreuse;
+        }
+
+        .row .col-room .state-3 {
+            background-color: darkred;
+            color: white;
+        }
+</style>
+<div class="row">
+    <dl class="rooms" style="display:none;">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.QueueName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PassWord)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Work)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Connected)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastDateTime)
-                </td>
-                <td>
-                    @if (item.Work)
-                    {
-                        @Html.ActionLink("Stop", "SnifferStop", new { queueName = item.QueueName }, new { target = "_blank" })
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Start", "Start", new { queueName = item.QueueName }, new { target = "_blank" })
-}
-                </td>
-            </tr>
+            <dd>
+                <input type="checkbox" id="chk_@item.Key" name="chk_roomId" value="@item.Key" checked="checked" />
+                <label for="chk_@item.Key">@item.Value</label>
+            </dd>
         }
-    </tbody>
-</table>
+    </dl>
+</div>
+<dl class="row">
+    @foreach (var item in Model)
+    {
+        <dd class="col-room" id="room_@item.Key">
+            <div class="title"><span class="roomName">@item.Value</span>&nbsp;&nbsp;<b><span class="roomIndex"></span></b>&nbsp;&nbsp;<span class="roomDate"></span></div>
+            <div class="number">loading...</div>
+            <div class="result">loading...</div>
+            <div class="recommend"></div>
+            <div class="clear"></div>
+        </dd>
+    }
+</dl>

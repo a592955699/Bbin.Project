@@ -13,14 +13,14 @@ namespace Bbin.Data
         {
             this.dbContext = _bbinDbContext;
         }
-        public ResultEntity findByRs(string rs)
+        public ResultEntity FindByRs(string rs)
         {
-            return dbContext.Results.FirstOrDefault(x => x.Rs == rs);
+            return dbContext.Results.Include(x=>x.Game).FirstOrDefault(x => x.Rs == rs);
         }
 
-        public List<ResultEntity> findList(long gameId)
+        public List<ResultEntity> FindList(long gameId)
         {
-            return dbContext.Results.Where(x => x.Game.GameId == gameId).OrderByDescending(x=>x.Index).ToList();
+            return dbContext.Results.Where(x => x.Game.GameId == gameId).OrderBy(x=>x.Index).ToList();
         }
 
         public bool Insert(ResultEntity result)
@@ -29,11 +29,14 @@ namespace Bbin.Data
             return dbContext.SaveChanges()>0;
         }
 
-        public ResultEntity GetResult(string roomId, string date, int gameIndex, int index)
+        public ResultEntity FindResult(string roomId, string date, int gameIndex, int index)
         {
-            return dbContext.Results.FirstOrDefault(x => x.Game.Index == gameIndex && x.Game.RoomId == roomId && x.Game.Date == date && x.Index == index);
+            return dbContext.Results.OrderByDescending(x=>x.Begin).Include(x => x.Game).FirstOrDefault(x => x.Game.Index == gameIndex && x.Game.RoomId == roomId && x.Game.Date == date && x.Index == index);
         }
 
-
+        public ResultEntity FindLastResult(string roomId, string date, int gameIndex)
+        {
+            return dbContext.Results.OrderByDescending(x => x.Begin).Include(x => x.Game).FirstOrDefault(x => x.Game.Index == gameIndex && x.Game.RoomId == roomId && x.Game.Date == date);
+        }
     }
 }

@@ -16,11 +16,18 @@ namespace Bbin.Manager
     public class RabbitMQService : IMQService
     {
         private readonly RabbitMQConfig rabbitMQConfig;
+        PublishSnifferUpActionExecutor publishSnifferUpActionExecutor;
+        PublishResultActionExcutor publishResultActionExcutor;
+
         private static ILog log = LogManager.GetLogger(Log4NetCons.LoggerRepositoryName, typeof(RabbitMQService));
         private readonly Dictionary<string, IActionExecutor> ActionExecutors;
-        public RabbitMQService(RabbitMQConfig _rabbitMQConfig)
+        public RabbitMQService(RabbitMQConfig _rabbitMQConfig
+            , PublishSnifferUpActionExecutor _publishSnifferUpActionExecutor
+            , PublishResultActionExcutor _publishResultActionExcutor)
         {
             rabbitMQConfig = _rabbitMQConfig;
+            publishResultActionExcutor = _publishResultActionExcutor;
+            publishSnifferUpActionExecutor = _publishSnifferUpActionExecutor;
             ActionExecutors = GetActionExecutors();
         }
 
@@ -47,26 +54,35 @@ namespace Bbin.Manager
             //接收到消息事件
             consumer.Received += (ch, ea) =>
             {
-                //处理收到的数据并打印
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
+                try
+                {
+                    //处理收到的数据并打印
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
 
-                var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
-                if (queueModel == null)
-                {
-                    log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue}  Body:{message} 接收数据序列化为 null");
-                    return;
-                }
+                    var queueModel = JsonConvert.DeserializeObject<QueueModel<object>>(message);
+                    if (queueModel == null)
+                    {
+                        log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue}  Body:{message} 接收数据序列化为 null");
+                        return;
+                    }
 
-                IActionExecutor actionExecutor;
-                if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
-                {
-                    log.Warn($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
-                    actionExecutor.DoExcute(message);
+                    IActionExecutor actionExecutor;
+                    if (ActionExecutors.TryGetValue(queueModel.Key, out actionExecutor))
+                    {
+                        if (log.IsDebugEnabled)
+                            log.Debug($"【提示】侦听 Queue:{RabbitMQCons.ManagerQueue} 准备执行 Action:{actionExecutor.GetType().Name}");
+                        actionExecutor.DoExecute(message);
+                    }
+                    else
+                    {
+                        log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue} 不识别命令:{queueModel.Key}");
+                        return;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    log.Warn($"【警告】侦听 Queue:{RabbitMQCons.ManagerQueue} 不识别命令:{queueModel.Key}");
+                    log.Error($"【错误】侦听 Queue:{RabbitMQCons.ManagerQueue} 异常!",ex);
                     return;
                 }
             };
@@ -87,7 +103,11 @@ namespace Bbin.Manager
         private Dictionary<string, IActionExecutor> GetActionExecutors()
         {
             Dictionary<string, IActionExecutor> keyValues = new Dictionary<string, IActionExecutor>();
-            keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
+            //keyValues.Add(CommandKeys.PublishSnifferUp, new PublishSnifferUpActionExecutor());
+            //keyValues.Add(CommandKeys.PublishResult, new PublishResultActionExcutor());
+
+            keyValues.Add(CommandKeys.PublishSnifferUp,publishSnifferUpActionExecutor);
+            keyValues.Add(CommandKeys.PublishResult, publishResultActionExcutor);
             return keyValues;
         }
     }

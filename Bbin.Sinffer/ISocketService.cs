@@ -1,5 +1,6 @@
 ﻿using Bbin.Core.Entitys;
 using Bbin.Core.Model;
+using Bbin.Sniffer.SnifferActionExecutors;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,8 +16,8 @@ namespace Bbin.Sniffer
         /// <summary>
         /// 处理 ws 响应的执行器
         /// </summary>
-        Dictionary<string, IInternalActionExecutor> ActionExecutors { get; }
-        object SetParams<T>(string action, string name, T value);
+        Dictionary<string, AbstractWsActionExecutor> ActionExecutors { get; }
+        void SetParams<T>(string action, string name, T value);
         /// <summary>
         /// 重连次数
         /// </summary>

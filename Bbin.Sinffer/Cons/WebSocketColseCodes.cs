@@ -9,7 +9,7 @@ namespace Bbin.Sniffer.Cons
         /// <summary>
         /// 手动关闭连接
         /// </summary>
-        public const ushort ManualShutdown = 3003;
+        public const ushort ManualShutdown = 3000;
         /// <summary>
         /// SessionId 无效
         /// </summary>
@@ -18,5 +18,9 @@ namespace Bbin.Sniffer.Cons
         /// 传输内容超过10M
         /// </summary>
         public const ushort ActivityIDLE_10M = 3002;
+        /// <summary>
+        /// 传输内容超过5M
+        /// </summary>
+        public const ushort ActivityIDLE_5M = 3003;
     }
 }

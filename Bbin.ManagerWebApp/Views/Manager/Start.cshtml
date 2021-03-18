@@ -1,0 +1,64 @@
+﻿@model Bbin.Core.Commandargs.SnifferUpArgs
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<h4>SnifferUpArgs</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Start">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="QueueName" class="control-label"></label>
+                <input asp-for="QueueName" class="form-control" />
+                <span asp-validation-for="QueueName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassWord" class="control-label"></label>
+                <input asp-for="PassWord" class="form-control" />
+                <span asp-validation-for="PassWord" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Work" /> @Html.DisplayNameFor(model => model.Work)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Connected" /> @Html.DisplayNameFor(model => model.Connected)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastDateTime" class="control-label"></label>
+                <input asp-for="LastDateTime" class="form-control" />
+                <span asp-validation-for="LastDateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Start" class="btn btn-primary" />
+               
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    @ViewBag.Message
+                </label>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
